@@ -1,0 +1,710 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Big Deal Bridge – Duplicate Bridge App for iPhone & iPad</title>
+  <meta name="description" content="Big Deal Bridge brings real duplicate bridge to your iPhone or iPad. Play in-person with a deck of cards, hundreds of tournament hands, and no scoring table required." />
+  <meta name="keywords" content="Big Deal Bridge, duplicate bridge app, iPhone bridge, iPad bridge, bridge scoring app, in-person bridge" />
+  <meta property="og:title" content="Big Deal Bridge – Duplicate Bridge App" />
+  <meta property="og:description" content="Play in-person duplicate bridge on your iPhone or iPad. Hundreds of tournaments, thousands of hands." />
+  <meta property="og:url" content="https://bigdealbridge.com" />
+  <meta property="og:type" content="website" />
+  <link rel="canonical" href="https://bigdealbridge.com" />
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@700;900&family=DM+Sans:wght@300;400;500&display=swap" rel="stylesheet" />
+  <style>
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+    :root {
+      --green:   #1a4731;
+      --green2:  #22603f;
+      --gold:    #c9a84c;
+      --gold-lt: #e8c97a;
+      --cream:   #faf6ee;
+      --dark:    #0f1f17;
+      --text:    #2b3a31;
+      --muted:   #6b7e71;
+      --card-bg: #ffffff;
+      --radius:  18px;
+    }
+
+    html { scroll-behavior: smooth; }
+
+    body {
+      font-family: 'DM Sans', sans-serif;
+      background: var(--cream);
+      color: var(--text);
+      overflow-x: hidden;
+    }
+
+    /* ── NAV ── */
+    nav {
+      position: fixed; top: 0; left: 0; right: 0; z-index: 100;
+      display: flex; justify-content: space-between; align-items: center;
+      padding: 18px 40px;
+      background: rgba(26,71,49,0.96);
+      backdrop-filter: blur(12px);
+      border-bottom: 1px solid rgba(201,168,76,0.2);
+    }
+    .nav-logo {
+      font-family: 'Playfair Display', serif;
+      font-size: 1.25rem;
+      color: var(--gold-lt);
+      letter-spacing: 0.02em;
+      text-decoration: none;
+    }
+    .nav-links { display: flex; gap: 32px; list-style: none; }
+    .nav-links a {
+      color: rgba(250,246,238,0.8);
+      text-decoration: none;
+      font-size: 0.875rem;
+      font-weight: 500;
+      letter-spacing: 0.04em;
+      transition: color 0.2s;
+    }
+    .nav-links a:hover { color: var(--gold-lt); }
+
+    /* ── HERO ── */
+    .hero {
+      min-height: 100vh;
+      background: var(--dark);
+      background-image:
+        radial-gradient(ellipse 60% 50% at 70% 60%, rgba(34,96,63,0.35) 0%, transparent 70%),
+        radial-gradient(ellipse 40% 60% at 20% 30%, rgba(201,168,76,0.12) 0%, transparent 60%);
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      align-items: center;
+      gap: 60px;
+      padding: 140px 80px 100px;
+      position: relative;
+      overflow: hidden;
+    }
+
+    /* subtle suit watermarks */
+    .hero::before {
+      content: "♠ ♥ ♦ ♣";
+      position: absolute;
+      bottom: -20px; right: -10px;
+      font-size: 220px;
+      color: rgba(255,255,255,0.02);
+      letter-spacing: 20px;
+      line-height: 1;
+      pointer-events: none;
+      user-select: none;
+    }
+
+    .hero-text { animation: fadeUp 0.8s ease both; }
+
+    .hero-badge {
+      display: inline-flex; align-items: center; gap: 8px;
+      background: rgba(201,168,76,0.15);
+      border: 1px solid rgba(201,168,76,0.35);
+      border-radius: 100px;
+      padding: 6px 16px;
+      font-size: 0.75rem;
+      font-weight: 500;
+      letter-spacing: 0.1em;
+      text-transform: uppercase;
+      color: var(--gold-lt);
+      margin-bottom: 28px;
+    }
+
+    h1 {
+      font-family: 'Playfair Display', serif;
+      font-size: clamp(2.6rem, 5vw, 4rem);
+      font-weight: 900;
+      line-height: 1.1;
+      color: var(--cream);
+      margin-bottom: 24px;
+    }
+    h1 span { color: var(--gold); }
+
+    .hero-sub {
+      font-size: 1.125rem;
+      line-height: 1.7;
+      color: rgba(250,246,238,0.7);
+      max-width: 480px;
+      margin-bottom: 44px;
+      font-weight: 300;
+    }
+
+    .hero-cta {
+      display: flex; gap: 16px; flex-wrap: wrap; align-items: center;
+    }
+
+    .btn-appstore {
+      display: inline-block;
+      transition: transform 0.2s, opacity 0.2s;
+    }
+    .btn-appstore:hover { transform: translateY(-2px); opacity: 0.9; }
+    .btn-appstore img { height: 52px; }
+
+    /* ── PHONE MOCKUP ── */
+    .hero-visual {
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      animation: fadeUp 0.8s 0.2s ease both;
+    }
+
+    .phone-frame {
+      position: relative;
+      width: 272px;
+    }
+
+    /* Outer shell */
+    .phone-frame .shell {
+      background: #1a1a1a;
+      border-radius: 52px;
+      padding: 14px;
+      box-shadow:
+        0 0 0 1.5px #3a3a3a,
+        0 0 0 3px #111,
+        0 48px 80px rgba(0,0,0,0.7),
+        0 16px 32px rgba(0,0,0,0.4),
+        inset 0 1px 0 rgba(255,255,255,0.08);
+    }
+
+    /* Screen bezel */
+    .phone-frame .bezel {
+      background: #000;
+      border-radius: 40px;
+      overflow: hidden;
+      position: relative;
+    }
+
+    /* Dynamic Island */
+    .phone-frame .dynamic-island {
+      position: absolute;
+      top: 12px;
+      left: 50%;
+      transform: translateX(-50%);
+      width: 90px;
+      height: 30px;
+      background: #000;
+      border-radius: 20px;
+      z-index: 10;
+    }
+
+    .phone-frame .screen-img {
+      width: 100%;
+      display: block;
+      border-radius: 40px;
+    }
+
+    /* Gold accent glow behind phone */
+    .phone-frame::before {
+      content: '';
+      position: absolute;
+      inset: -20px;
+      background: radial-gradient(ellipse 60% 50% at 50% 60%, rgba(201,168,76,0.12) 0%, transparent 70%);
+      pointer-events: none;
+      z-index: -1;
+    }
+
+    /* Side buttons */
+    .phone-frame .btn-right {
+      position: absolute;
+      right: -3px;
+      top: 110px;
+      width: 3px;
+      height: 72px;
+      background: #2a2a2a;
+      border-radius: 0 3px 3px 0;
+    }
+    .phone-frame .btn-left-1 {
+      position: absolute;
+      left: -3px;
+      top: 90px;
+      width: 3px;
+      height: 36px;
+      background: #2a2a2a;
+      border-radius: 3px 0 0 3px;
+    }
+    .phone-frame .btn-left-2 {
+      position: absolute;
+      left: -3px;
+      top: 140px;
+      width: 3px;
+      height: 52px;
+      background: #2a2a2a;
+      border-radius: 3px 0 0 3px;
+    }
+    .phone-frame .btn-left-3 {
+      position: absolute;
+      left: -3px;
+      top: 206px;
+      width: 3px;
+      height: 52px;
+      background: #2a2a2a;
+      border-radius: 3px 0 0 3px;
+    }
+
+    .score-val {
+      font-family: 'Playfair Display', serif;
+      font-size: 1.2rem;
+      color: var(--gold-lt);
+    }
+    .score-lbl { font-size: 0.55rem; letter-spacing: 0.1em; color: rgba(255,255,255,0.4); text-transform: uppercase; }
+
+    /* ── FEATURES ── */
+    .features {
+      padding: 100px 80px;
+      background: var(--cream);
+    }
+
+    .section-label {
+      text-align: center;
+      font-size: 0.75rem;
+      font-weight: 500;
+      letter-spacing: 0.15em;
+      text-transform: uppercase;
+      color: var(--gold);
+      margin-bottom: 16px;
+    }
+
+    h2 {
+      font-family: 'Playfair Display', serif;
+      font-size: clamp(2rem, 4vw, 2.8rem);
+      font-weight: 700;
+      text-align: center;
+      color: var(--green);
+      margin-bottom: 64px;
+      line-height: 1.2;
+    }
+
+    .features-grid {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 24px;
+      max-width: 1100px;
+      margin: 0 auto;
+    }
+
+    .feature-card {
+      background: white;
+      border-radius: var(--radius);
+      padding: 36px 32px;
+      border: 1px solid rgba(26,71,49,0.08);
+      box-shadow: 0 4px 24px rgba(26,71,49,0.06);
+      transition: transform 0.25s, box-shadow 0.25s;
+    }
+    .feature-card:hover {
+      transform: translateY(-4px);
+      box-shadow: 0 12px 40px rgba(26,71,49,0.12);
+    }
+
+    .feature-icon {
+      width: 52px; height: 52px;
+      background: linear-gradient(135deg, var(--green), var(--green2));
+      border-radius: 14px;
+      display: flex; align-items: center; justify-content: center;
+      font-size: 1.5rem;
+      margin-bottom: 20px;
+    }
+
+    .feature-card h3 {
+      font-family: 'Playfair Display', serif;
+      font-size: 1.2rem;
+      color: var(--green);
+      margin-bottom: 10px;
+    }
+
+    .feature-card p {
+      font-size: 0.925rem;
+      line-height: 1.65;
+      color: var(--muted);
+      font-weight: 300;
+    }
+
+    /* ── VIDEO SECTION ── */
+    .video-section {
+      background: var(--dark);
+      padding: 100px 80px;
+      text-align: center;
+    }
+    .video-section .section-label { color: var(--gold); }
+    .video-section h2 { color: var(--cream); margin-bottom: 16px; }
+    .video-section .video-sub {
+      font-size: 1rem;
+      color: rgba(250,246,238,0.55);
+      font-weight: 300;
+      margin-bottom: 52px;
+    }
+    .video-wrapper {
+      max-width: 320px;
+      margin: 0 auto;
+      position: relative;
+    }
+    .video-phone {
+      background: #1a1a1a;
+      border-radius: 52px;
+      padding: 14px;
+      box-shadow:
+        0 0 0 1.5px #3a3a3a,
+        0 0 0 3px #111,
+        0 48px 80px rgba(0,0,0,0.7),
+        inset 0 1px 0 rgba(255,255,255,0.08);
+      position: relative;
+    }
+    .video-phone .vp-btn-right {
+      position: absolute; right: -3px; top: 110px;
+      width: 3px; height: 72px;
+      background: #2a2a2a; border-radius: 0 3px 3px 0;
+    }
+    .video-phone .vp-btn-left-1 {
+      position: absolute; left: -3px; top: 90px;
+      width: 3px; height: 36px;
+      background: #2a2a2a; border-radius: 3px 0 0 3px;
+    }
+    .video-phone .vp-btn-left-2 {
+      position: absolute; left: -3px; top: 140px;
+      width: 3px; height: 52px;
+      background: #2a2a2a; border-radius: 3px 0 0 3px;
+    }
+    .video-phone .vp-btn-left-3 {
+      position: absolute; left: -3px; top: 206px;
+      width: 3px; height: 52px;
+      background: #2a2a2a; border-radius: 3px 0 0 3px;
+    }
+    .video-bezel {
+      background: #000;
+      border-radius: 40px;
+      overflow: hidden;
+      position: relative;
+    }
+    .video-dynamic-island {
+      position: absolute;
+      top: 12px; left: 50%;
+      transform: translateX(-50%);
+      width: 90px; height: 30px;
+      background: #000;
+      border-radius: 20px;
+      z-index: 10;
+      pointer-events: none;
+    }
+    .video-bezel video {
+      width: 100%;
+      display: block;
+      border-radius: 40px;
+    }
+
+    /* ── HOW IT WORKS ── */
+    .how {
+      padding: 100px 80px;
+      background: var(--green);
+      position: relative;
+      overflow: hidden;
+    }
+    .how::before {
+      content: '♠♥♦♣';
+      position: absolute;
+      top: -40px; right: -20px;
+      font-size: 300px;
+      color: rgba(255,255,255,0.03);
+      line-height: 1;
+      pointer-events: none;
+    }
+    .how h2 { color: var(--cream); }
+    .how .section-label { color: var(--gold-lt); }
+
+    .steps {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 40px;
+      max-width: 900px;
+      margin: 0 auto;
+      position: relative;
+    }
+
+    .steps::before {
+      content: '';
+      position: absolute;
+      top: 32px; left: calc(16.67% + 20px); right: calc(16.67% + 20px);
+      height: 1px;
+      background: linear-gradient(90deg, transparent, rgba(201,168,76,0.4), transparent);
+    }
+
+    .step { text-align: center; }
+
+    .step-num {
+      width: 64px; height: 64px;
+      border-radius: 50%;
+      background: rgba(201,168,76,0.15);
+      border: 1px solid rgba(201,168,76,0.4);
+      color: var(--gold-lt);
+      font-family: 'Playfair Display', serif;
+      font-size: 1.5rem;
+      display: flex; align-items: center; justify-content: center;
+      margin: 0 auto 20px;
+    }
+
+    .step h3 {
+      font-family: 'Playfair Display', serif;
+      font-size: 1.1rem;
+      color: var(--cream);
+      margin-bottom: 10px;
+    }
+
+    .step p {
+      font-size: 0.875rem;
+      color: rgba(250,246,238,0.6);
+      line-height: 1.6;
+      font-weight: 300;
+    }
+
+    /* ── CTA SECTION ── */
+    .cta-section {
+      padding: 100px 80px;
+      text-align: center;
+      background: var(--cream);
+    }
+
+    .cta-section h2 { margin-bottom: 16px; }
+
+    .cta-section p {
+      font-size: 1.05rem;
+      color: var(--muted);
+      margin-bottom: 44px;
+      font-weight: 300;
+    }
+
+    .cta-note {
+      margin-top: 20px;
+      font-size: 0.8rem;
+      color: var(--muted);
+    }
+    .cta-note a { color: var(--green2); }
+
+    /* ── FOOTER ── */
+    footer {
+      background: var(--dark);
+      padding: 48px 80px;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      flex-wrap: wrap;
+      gap: 20px;
+      border-top: 1px solid rgba(201,168,76,0.1);
+    }
+
+    .footer-logo {
+      font-family: 'Playfair Display', serif;
+      font-size: 1.1rem;
+      color: var(--gold-lt);
+    }
+
+    .footer-links {
+      display: flex; gap: 28px; list-style: none;
+    }
+    .footer-links a {
+      font-size: 0.85rem;
+      color: rgba(250,246,238,0.5);
+      text-decoration: none;
+      transition: color 0.2s;
+    }
+    .footer-links a:hover { color: var(--gold-lt); }
+
+    .footer-copy {
+      font-size: 0.8rem;
+      color: rgba(250,246,238,0.3);
+      width: 100%;
+      text-align: center;
+      margin-top: 8px;
+    }
+
+    /* ── ANIMATIONS ── */
+    @keyframes fadeUp {
+      from { opacity: 0; transform: translateY(28px); }
+      to   { opacity: 1; transform: translateY(0); }
+    }
+
+    /* ── RESPONSIVE ── */
+    @media (max-width: 900px) {
+      nav { padding: 16px 24px; }
+      .nav-links { gap: 20px; }
+      .hero {
+        grid-template-columns: 1fr;
+        padding: 120px 32px 80px;
+        text-align: center;
+      }
+      .hero-sub { margin: 0 auto 44px; }
+      .hero-cta { justify-content: center; }
+      .hero-visual { display: none; }
+      .features { padding: 72px 32px; }
+      .features-grid { grid-template-columns: 1fr; }
+      .video-section { padding: 72px 32px; }
+      .how { padding: 72px 32px; }
+      .steps { grid-template-columns: 1fr; }
+      .steps::before { display: none; }
+      .cta-section { padding: 72px 32px; }
+      footer { flex-direction: column; text-align: center; padding: 40px 32px; }
+    }
+  </style>
+</head>
+<body>
+
+  <!-- NAV -->
+  <nav>
+    <a href="#" class="nav-logo">Big Deal Bridge</a>
+    <ul class="nav-links">
+      <li><a href="#features">Features</a></li>
+      <li><a href="#how">How It Works</a></li>
+      <li><a href="faq/">FAQ</a></li>
+      <li><a href="support/">Support</a></li>
+    </ul>
+  </nav>
+
+  <!-- HERO -->
+  <section class="hero">
+    <div class="hero-text">
+      <h1>Duplicate Bridge,<br><span>In Your Pocket</span></h1>
+      <p class="hero-sub">
+        Play real in-person duplicate bridge with your iPhone or iPad, a standard deck of cards, and four players. Real matchpoint results, real duplicate, real fun.
+      </p>
+      <div class="hero-cta">
+        <a class="btn-appstore" href="https://apps.apple.com/us/app/big-deal-bridge/id6741008853" target="_blank" rel="noopener">
+          <img src="https://tools.applemediaservices.com/api/badges/download-on-the-app-store/black/en-us?size=250x83" alt="Download on the App Store" />
+        </a>
+      </div>
+    </div>
+
+    <div class="hero-visual">
+      <div class="phone-frame">
+        <div class="btn-right"></div>
+        <div class="btn-left-1"></div>
+        <div class="btn-left-2"></div>
+        <div class="btn-left-3"></div>
+        <div class="shell">
+          <div class="bezel">
+            <div class="dynamic-island"></div>
+            <img
+              class="screen-img"
+              src="screenshot-bidding.jpeg"
+              alt="Big Deal Bridge bidding screen showing contract selection grid"
+            />
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- FEATURES -->
+  <section class="features" id="features">
+    <p class="section-label">What You Get</p>
+    <h2>Everything You Need<br>to Play a Tournament at Home</h2>
+
+    <div class="features-grid">
+      <div class="feature-card">
+        <div class="feature-icon">🏆</div>
+        <h3>Hundreds of Tournaments</h3>
+        <p>Choose from a vast library of pre-dealt tournament hand files, or load any PBN file you already have. New sessions whenever you want them.</p>
+      </div>
+      <div class="feature-card">
+        <div class="feature-icon">⚡</div>
+        <h3>Instant Contract Mode</h3>
+        <p>New to bridge? Skip the bidding entirely with Instant Contract — perfect for introducing friends to the game without the learning curve.</p>
+      </div>
+      <div class="feature-card">
+        <div class="feature-icon">📁</div>
+        <h3>Load Any PBN File</h3>
+        <p>Import any standard PBN hand record file from your club, a tournament, or online. Full compatibility with the formats you already use.</p>
+      </div>
+      <div class="feature-card">
+        <div class="feature-icon">📱</div>
+        <h3>iPhone & iPad Native</h3>
+        <p>Built specifically for iOS. Works beautifully on any iPhone or iPad — no internet connection required once the app is installed.</p>
+      </div>
+      <div class="feature-card">
+        <div class="feature-icon">🃏</div>
+        <h3>Real Cards, Real Play</h3>
+        <p>Uses your own physical deck of cards. The app handles the dealing, scoring, and tracking while you enjoy the feel of actual cardplay.</p>
+      </div>
+      <div class="feature-card">
+        <div class="feature-icon">👥</div>
+        <h3>Four Players, One App</h3>
+        <p>One device handles your entire session. Pass it around for scoring, or leave it on the table — designed for real in-person social play.</p>
+      </div>
+    </div>
+  </section>
+
+  <!-- VIDEO -->
+  <section class="video-section">
+    <p class="section-label">See It In Action</p>
+    <h2>Watch a Full Session</h2>
+    <p class="video-sub">From dealing to scoring — see how Big Deal Bridge runs a real duplicate session.</p>
+    <div class="video-wrapper">
+      <div class="video-phone">
+        <div class="vp-btn-right"></div>
+        <div class="vp-btn-left-1"></div>
+        <div class="vp-btn-left-2"></div>
+        <div class="vp-btn-left-3"></div>
+        <div class="video-bezel">
+          <div class="video-dynamic-island"></div>
+          <video
+            src="app-preview.mp4"
+            autoplay
+            muted
+            loop
+            playsinline
+            preload="metadata"
+            aria-label="Big Deal Bridge app preview video"
+          ></video>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- HOW IT WORKS -->
+  <section class="how" id="how">
+    <p class="section-label">Getting Started</p>
+    <h2>Up and Playing in Minutes</h2>
+
+    <div class="steps">
+      <div class="step">
+        <div class="step-num">1</div>
+        <h3>Choose a Tournament</h3>
+        <p>Select from the built-in library or load your own PBN hand record file.</p>
+      </div>
+      <div class="step">
+        <div class="step-num">2</div>
+        <h3>Deal the Hands</h3>
+        <p>The app tells you exactly how to deal each board using a standard deck of cards.</p>
+      </div>
+      <div class="step">
+        <div class="step-num">3</div>
+        <h3>Play & Score</h3>
+        <p>Bid, play, and enter results. The app tracks everything and calculates your matchpoints.</p>
+      </div>
+    </div>
+  </section>
+
+  <!-- CTA -->
+  <section class="cta-section">
+    <p class="section-label">Download Today</p>
+    <h2>Ready to Deal?</h2>
+    <p>Free to download. Available now on the App Store for iPhone and iPad.</p>
+    <a class="btn-appstore" href="https://apps.apple.com/us/app/big-deal-bridge/id6741008853" target="_blank" rel="noopener">
+      <img src="https://tools.applemediaservices.com/api/badges/download-on-the-app-store/black/en-us?size=250x83" alt="Download on the App Store" />
+    </a>
+    <p class="cta-note">
+      Looking for the tournament dealing software by Hans van Staveren?
+      <a href="https://github.com/hansvanstaveren/BigDeal" target="_blank" rel="noopener">Visit the GitHub page →</a>
+    </p>
+  </section>
+
+  <!-- FOOTER -->
+  <footer>
+    <div class="footer-logo">Big Deal Bridge LLC</div>
+    <ul class="footer-links">
+      <li><a href="faq/">FAQ</a></li>
+      <li><a href="privacy/">Privacy Policy</a></li>
+      <li><a href="support/">Support</a></li>
+    </ul>
+    <p class="footer-copy">Copyright © 2024, 2025 Big Deal Bridge LLC. All rights reserved.</p>
+  </footer>
+
+</body>
+</html>
