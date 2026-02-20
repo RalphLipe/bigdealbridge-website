@@ -177,19 +177,6 @@
       position: relative;
     }
 
-    /* Dynamic Island */
-    .phone-frame .dynamic-island {
-      position: absolute;
-      top: 12px;
-      left: 50%;
-      transform: translateX(-50%);
-      width: 90px;
-      height: 30px;
-      background: #000;
-      border-radius: 20px;
-      z-index: 10;
-    }
-
     .phone-frame .screen-img {
       width: 100%;
       display: block;
@@ -377,16 +364,6 @@
       border-radius: 40px;
       overflow: hidden;
       position: relative;
-    }
-    .video-dynamic-island {
-      position: absolute;
-      top: 12px; left: 50%;
-      transform: translateX(-50%);
-      width: 90px; height: 30px;
-      background: #000;
-      border-radius: 20px;
-      z-index: 10;
-      pointer-events: none;
     }
     .video-bezel video {
       width: 100%;
@@ -611,7 +588,6 @@
         <div class="btn-left-3"></div>
         <div class="shell">
           <div class="bezel">
-            <div class="dynamic-island"></div>
             <img
               class="screen-img"
               src="screenshot-bidding.jpeg"
@@ -672,7 +648,6 @@
         <div class="vp-btn-left-2"></div>
         <div class="vp-btn-left-3"></div>
         <div class="video-bezel">
-          <div class="video-dynamic-island"></div>
           <video
             src="app-preview.mp4"
             autoplay
