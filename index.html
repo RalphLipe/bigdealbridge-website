@@ -545,6 +545,29 @@
       .cta-section { padding: 72px 32px; }
       footer { flex-direction: column; text-align: center; padding: 40px 32px; }
     }
+
+    /* ── QR CODE ── */
+    .qr-hint {
+      display: none;
+      flex-direction: column;
+      align-items: center;
+      gap: 10px;
+      margin-top: 20px;
+    }
+    .qr-code canvas, .qr-code img {
+      border-radius: 10px;
+      padding: 10px;
+      background: white;
+      display: block;
+    }
+    .qr-hint span {
+      font-size: 0.75rem;
+      font-weight: 400;
+      letter-spacing: 0.06em;
+      text-transform: uppercase;
+      color: rgba(250,246,238,0.45);
+    }
+    .cta-section .qr-hint span { color: rgba(250,246,238,0.45); }
   </style>
 </head>
 <body>
@@ -572,6 +595,7 @@
         <a class="btn-appstore" href="https://apps.apple.com/us/app/big-deal-bridge/id6741008853" target="_blank" rel="noopener">
           <img src="https://tools.applemediaservices.com/api/badges/download-on-the-app-store/black/en-us?size=250x83" alt="Download on the App Store" />
         </a>
+        <div class="qr-hint" id="qr-hero"><div class="qr-code"></div><span>Scan to download</span></div>
       </div>
     </div>
 
@@ -690,6 +714,7 @@
     <a class="btn-appstore" href="https://apps.apple.com/us/app/big-deal-bridge/id6741008853" target="_blank" rel="noopener">
       <img src="https://tools.applemediaservices.com/api/badges/download-on-the-app-store/black/en-us?size=250x83" alt="Download on the App Store" />
     </a>
+    <div class="qr-hint" id="qr-cta"><div class="qr-code"></div><span>Scan to download</span></div>
     <p class="cta-note">
       Looking for the tournament dealing software by Hans van Staveren?
       <a href="https://github.com/hansvanstaveren/BigDeal" target="_blank" rel="noopener">Visit the GitHub page →</a>
@@ -707,7 +732,26 @@
     <p class="footer-copy">Copyright © 2024, 2025 Big Deal Bridge LLC. All rights reserved.</p>
   </footer>
 
+  <script src="https://cdn.jsdelivr.net/npm/qrcodejs@1.0.0/qrcode.min.js"></script>
   <script>
+    // Show QR codes only on non-touch desktop browsers
+    if (!/iPhone|iPad|iPod|Android/i.test(navigator.userAgent)) {
+      const APP_URL = 'https://apps.apple.com/us/app/big-deal-bridge/id6741008853';
+      ['qr-hero', 'qr-cta'].forEach(id => {
+        const hint = document.getElementById(id);
+        if (!hint) return;
+        hint.style.display = 'flex';
+        new QRCode(hint.querySelector('.qr-code'), {
+          text: APP_URL,
+          width: 120,
+          height: 120,
+          colorDark: '#0f1f17',
+          colorLight: '#ffffff',
+          correctLevel: QRCode.CorrectLevel.M
+        });
+      });
+    }
+
     const screenshots = [
       'screenshot-bidding.jpeg',
       'screenshot-results.jpeg',
