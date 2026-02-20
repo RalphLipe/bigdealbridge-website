@@ -249,6 +249,83 @@
     }
     .score-lbl { font-size: 0.55rem; letter-spacing: 0.1em; color: rgba(255,255,255,0.4); text-transform: uppercase; }
 
+    /* ── SCREENSHOT GALLERY ── */
+    .gallery {
+      background: var(--dark);
+      padding: 80px 0 90px;
+      overflow: hidden;
+      position: relative;
+    }
+    .gallery::before, .gallery::after {
+      content: '';
+      position: absolute;
+      top: 0; bottom: 0;
+      width: 120px;
+      z-index: 10;
+      pointer-events: none;
+    }
+    .gallery::before {
+      left: 0;
+      background: linear-gradient(to right, var(--dark), transparent);
+    }
+    .gallery::after {
+      right: 0;
+      background: linear-gradient(to left, var(--dark), transparent);
+    }
+    .gallery-label {
+      text-align: center;
+      font-size: 0.75rem;
+      font-weight: 500;
+      letter-spacing: 0.15em;
+      text-transform: uppercase;
+      color: var(--gold);
+      margin-bottom: 48px;
+    }
+    .gallery-track {
+      display: flex;
+      gap: 40px;
+      animation: galleryScroll 18s linear infinite;
+      width: max-content;
+    }
+    .gallery-track:hover { animation-play-state: paused; }
+    @keyframes galleryScroll {
+      0%   { transform: translateX(0); }
+      100% { transform: translateX(-50%); }
+    }
+    .gallery-phone {
+      background: #1a1a1a;
+      border-radius: 44px;
+      padding: 11px;
+      box-shadow:
+        0 0 0 1.5px #3a3a3a,
+        0 0 0 3px #111,
+        0 32px 60px rgba(0,0,0,0.6),
+        inset 0 1px 0 rgba(255,255,255,0.08);
+      position: relative;
+      flex-shrink: 0;
+      width: 200px;
+    }
+    .gallery-phone .gp-island {
+      position: absolute;
+      top: 10px; left: 50%;
+      transform: translateX(-50%);
+      width: 66px; height: 22px;
+      background: #000;
+      border-radius: 14px;
+      z-index: 10;
+      pointer-events: none;
+    }
+    .gallery-phone .gp-bezel {
+      background: #000;
+      border-radius: 34px;
+      overflow: hidden;
+    }
+    .gallery-phone img {
+      width: 100%;
+      display: block;
+      border-radius: 34px;
+    }
+
     /* ── FEATURES ── */
     .features {
       padding: 100px 80px;
@@ -586,6 +663,51 @@
               alt="Big Deal Bridge bidding screen showing contract selection grid"
             />
           </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- SCREENSHOT GALLERY -->
+  <section class="gallery">
+    <p class="gallery-label">See Every Screen</p>
+    <div class="gallery-track">
+      <!-- Original set -->
+      <div class="gallery-phone">
+        <div class="gp-island"></div>
+        <div class="gp-bezel">
+          <img src="screenshot-board.jpeg" alt="Board layout screen" />
+        </div>
+      </div>
+      <div class="gallery-phone">
+        <div class="gp-island"></div>
+        <div class="gp-bezel">
+          <img src="screenshot-bidding.jpeg" alt="Bidding grid screen" />
+        </div>
+      </div>
+      <div class="gallery-phone">
+        <div class="gp-island"></div>
+        <div class="gp-bezel">
+          <img src="screenshot-results.jpeg" alt="Results and matchpoints screen" />
+        </div>
+      </div>
+      <!-- Duplicated set for seamless loop -->
+      <div class="gallery-phone">
+        <div class="gp-island"></div>
+        <div class="gp-bezel">
+          <img src="screenshot-board.jpeg" alt="Board layout screen" />
+        </div>
+      </div>
+      <div class="gallery-phone">
+        <div class="gp-island"></div>
+        <div class="gp-bezel">
+          <img src="screenshot-bidding.jpeg" alt="Bidding grid screen" />
+        </div>
+      </div>
+      <div class="gallery-phone">
+        <div class="gp-island"></div>
+        <div class="gp-bezel">
+          <img src="screenshot-results.jpeg" alt="Results and matchpoints screen" />
         </div>
       </div>
     </div>
