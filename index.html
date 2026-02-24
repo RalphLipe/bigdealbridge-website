@@ -342,6 +342,7 @@
       background: #1a1a1a;
       border-radius: 52px;
       padding: 14px;
+      width: 272px;
       box-shadow:
         0 0 0 1.5px #3a3a3a,
         0 0 0 3px #111,
@@ -526,7 +527,7 @@
       .hero-logo { display: none !important; }
       .how::before { display: none; }
       .hero-visual { display: flex; margin-top: 48px; }
-      .phone-frame { width: 220px; }
+      .video-phone { width: 200px; }
       .features { padding: 72px 32px; }
       .features-grid { grid-template-columns: 1fr; }
       .video-section { padding: 72px 32px; }
@@ -569,8 +570,8 @@
     <a href="#" class="nav-logo"><img src="logo-full.svg" alt="Big Deal Bridge" style="height:36px;filter:brightness(0) saturate(100%) invert(85%) sepia(30%) saturate(600%) hue-rotate(5deg) brightness(105%);"></a>
     <ul class="nav-links">
       <li><a href="#features">Features</a></li>
-      <li><a href="#how">How It Works</a></li>
       <li><a href="faq/">FAQ</a></li>
+      <li><a href="privacy/">Privacy</a></li>
       <li><a href="support/">Support</a></li>
     </ul>
   </nav>
@@ -592,19 +593,21 @@
     </div>
 
     <div class="hero-visual">
-      <div class="phone-frame">
-        <div class="btn-right"></div>
-        <div class="btn-left-1"></div>
-        <div class="btn-left-2"></div>
-        <div class="btn-left-3"></div>
-        <div class="shell">
-          <div class="bezel">
-            <img
-              class="screen-img"
-              src="screenshot-bidding.jpeg"
-              alt="Big Deal Bridge bidding screen showing contract selection grid"
-            />
-          </div>
+      <div class="video-phone">
+        <div class="vp-btn-right"></div>
+        <div class="vp-btn-left-1"></div>
+        <div class="vp-btn-left-2"></div>
+        <div class="vp-btn-left-3"></div>
+        <div class="video-bezel">
+          <video
+            src="app-preview.mp4"
+            autoplay
+            muted
+            loop
+            playsinline
+            preload="metadata"
+            aria-label="Big Deal Bridge app preview video"
+          ></video>
         </div>
       </div>
     </div>
@@ -648,33 +651,8 @@
     </div>
   </section>
 
-  <!-- VIDEO -->
-  <section class="video-section" id="how">
-    <h2>See It in Action</h2>
-    <p class="video-sub">From dealing to scoring — see how Big Deal Bridge runs a real duplicate session.</p>
-    <div class="video-wrapper">
-      <div class="video-phone">
-        <div class="vp-btn-right"></div>
-        <div class="vp-btn-left-1"></div>
-        <div class="vp-btn-left-2"></div>
-        <div class="vp-btn-left-3"></div>
-        <div class="video-bezel">
-          <video
-            src="app-preview.mp4"
-            autoplay
-            muted
-            loop
-            playsinline
-            preload="metadata"
-            aria-label="Big Deal Bridge app preview video"
-          ></video>
-        </div>
-      </div>
-    </div>
-  </section>
-
   <!-- HOW IT WORKS -->
-  <section class="how">
+  <section class="how" id="how">
     <h2>Up and Playing in Minutes</h2>
 
     <div class="steps">
@@ -741,22 +719,6 @@
       });
     }
 
-    const screenshots = [
-      'screenshot-bidding.jpeg',
-      'screenshot-results.jpeg',
-      'screenshot-board.jpeg'
-    ];
-    let current = 0;
-    const img = document.querySelector('.screen-img');
-
-    setInterval(() => {
-      current = (current + 1) % screenshots.length;
-      img.style.opacity = '0';
-      setTimeout(() => {
-        img.src = screenshots[current];
-        img.style.opacity = '1';
-      }, 600);
-    }, 3000);
   </script>
 </body>
 </html>
