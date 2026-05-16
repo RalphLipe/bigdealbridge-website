@@ -1,0 +1,663 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Handsee – Bridge Lesson Hands for iPhone & iPad</title>
+  <meta name="description" content="Handsee lets bridge teachers deal lesson hands and helps beginners review set hands. Deal blind with your iPhone camera, then see the full hand summary from the PBN file. Free." />
+  <meta name="keywords" content="Handsee, bridge lesson app, bridge teaching app, iPhone bridge, learn bridge, PBN hand viewer" />
+  <meta property="og:title" content="Handsee – Bridge Lesson Hands" />
+  <meta property="og:description" content="Deal lesson hands blind with your iPhone, then reveal the full hand record, auction, and analysis. Free for iPhone and iPad." />
+  <meta property="og:url" content="https://bigdealbridge.com/handsee/" />
+  <meta property="og:type" content="website" />
+  <link rel="canonical" href="https://bigdealbridge.com/handsee/" />
+  <link rel="icon" type="image/svg+xml" href="/logo-mark.svg" />
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@700;900&family=DM+Sans:wght@300;400;500&display=swap" rel="stylesheet" />
+  <style>
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+    :root {
+      --green:   #1a4731;
+      --green2:  #22603f;
+      --gold:    #c9a84c;
+      --gold-lt: #e8c97a;
+      --cream:   #faf6ee;
+      --dark:    #0f1f17;
+      --text:    #2b3a31;
+      --muted:   #6b7e71;
+      --radius:  18px;
+    }
+
+    html { scroll-behavior: smooth; }
+
+    body {
+      font-family: 'DM Sans', sans-serif;
+      background: var(--cream);
+      color: var(--text);
+      overflow-x: hidden;
+    }
+
+    /* ── NAV ── */
+    nav {
+      position: fixed; top: 0; left: 0; right: 0; z-index: 100;
+      display: flex; justify-content: space-between; align-items: center;
+      padding: 18px 40px;
+      background: rgba(26,71,49,0.96);
+      backdrop-filter: blur(12px);
+      border-bottom: 1px solid rgba(201,168,76,0.2);
+    }
+    .nav-logo {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      text-decoration: none;
+    }
+    .nav-logo-lockup {
+      display: flex;
+      flex-direction: column;
+      line-height: 1.1;
+    }
+    .nav-logo-family {
+      font-size: 0.65rem;
+      font-weight: 400;
+      letter-spacing: 0.12em;
+      text-transform: uppercase;
+      color: rgba(232,201,122,0.55);
+    }
+    .nav-logo-name {
+      font-family: 'Playfair Display', serif;
+      font-size: 1.15rem;
+      font-weight: 700;
+      color: var(--gold-lt);
+      letter-spacing: 0.02em;
+    }
+    .nav-links { display: flex; gap: 32px; list-style: none; }
+    .nav-links a {
+      color: rgba(250,246,238,0.8);
+      text-decoration: none;
+      font-size: 0.875rem;
+      font-weight: 500;
+      letter-spacing: 0.04em;
+      transition: color 0.2s;
+    }
+    .nav-links a:hover { color: var(--gold-lt); }
+
+    /* ── HERO ── */
+    .hero {
+      min-height: 100vh;
+      background: var(--dark);
+      background-image:
+        radial-gradient(ellipse 60% 50% at 50% 55%, rgba(34,96,63,0.3) 0%, transparent 70%),
+        radial-gradient(ellipse 40% 40% at 20% 25%, rgba(201,168,76,0.1) 0%, transparent 60%);
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      text-align: center;
+      padding: 140px 40px 100px;
+      position: relative;
+      overflow: hidden;
+    }
+
+    .hero::before {
+      content: "♠ ♥ ♦ ♣";
+      position: absolute;
+      bottom: -20px; right: -10px;
+      font-size: 220px;
+      color: rgba(255,255,255,0.02);
+      letter-spacing: 20px;
+      line-height: 1;
+      pointer-events: none;
+      user-select: none;
+    }
+
+    .hero-content {
+      max-width: 680px;
+      animation: fadeUp 0.8s ease both;
+    }
+
+    .hero-badge {
+      display: inline-flex; align-items: center; gap: 8px;
+      background: rgba(201,168,76,0.15);
+      border: 1px solid rgba(201,168,76,0.35);
+      border-radius: 100px;
+      padding: 6px 16px;
+      font-size: 0.75rem;
+      font-weight: 500;
+      letter-spacing: 0.1em;
+      text-transform: uppercase;
+      color: var(--gold-lt);
+      margin-bottom: 28px;
+    }
+
+    h1 {
+      font-family: 'Playfair Display', serif;
+      font-size: clamp(2.6rem, 5vw, 4rem);
+      font-weight: 900;
+      line-height: 1.1;
+      color: var(--cream);
+      margin-bottom: 24px;
+    }
+    h1 span { color: var(--gold); }
+
+    .hero-sub {
+      font-size: 1.125rem;
+      line-height: 1.7;
+      color: rgba(250,246,238,0.7);
+      max-width: 540px;
+      margin: 0 auto 44px;
+      font-weight: 300;
+    }
+
+    .hero-cta {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 16px;
+    }
+
+    .btn-appstore {
+      display: inline-block;
+      transition: transform 0.2s, opacity 0.2s;
+    }
+    .btn-appstore:hover { transform: translateY(-2px); opacity: 0.9; }
+    .btn-appstore img { height: 52px; }
+
+    /* ── HAND RECORD MOCKUP ── */
+    .hand-record {
+      margin-top: 72px;
+      animation: fadeUp 0.8s 0.2s ease both;
+      background: rgba(255,255,255,0.04);
+      border: 1px solid rgba(201,168,76,0.2);
+      border-radius: 20px;
+      padding: 28px 32px;
+      display: inline-block;
+      text-align: left;
+      min-width: 320px;
+    }
+
+    .hand-record-title {
+      font-size: 0.65rem;
+      letter-spacing: 0.14em;
+      text-transform: uppercase;
+      color: var(--gold);
+      margin-bottom: 20px;
+      text-align: center;
+    }
+
+    .hr-grid {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 16px 28px;
+    }
+
+    .hr-seat {
+      display: flex;
+      flex-direction: column;
+      gap: 3px;
+    }
+
+    .hr-seat-name {
+      font-size: 0.6rem;
+      letter-spacing: 0.12em;
+      text-transform: uppercase;
+      color: rgba(232,201,122,0.5);
+      margin-bottom: 4px;
+    }
+
+    .hr-hand-row {
+      display: flex;
+      gap: 4px;
+      align-items: baseline;
+      font-size: 0.78rem;
+      color: rgba(250,246,238,0.6);
+      font-weight: 400;
+      font-variant-numeric: tabular-nums;
+    }
+
+    .hr-hand-row .sym { font-size: 0.82rem; }
+    .hr-hand-row .sym.red { color: #e07070; }
+    .hr-hand-row .sym.black { color: rgba(250,246,238,0.8); }
+
+    .hr-hcp {
+      margin-top: 6px;
+      font-size: 0.65rem;
+      color: rgba(201,168,76,0.6);
+      letter-spacing: 0.05em;
+    }
+
+    .hr-divider {
+      grid-column: 1 / -1;
+      height: 1px;
+      background: rgba(201,168,76,0.12);
+      margin: 4px 0;
+    }
+
+    .hr-auction {
+      grid-column: 1 / -1;
+      margin-top: 4px;
+    }
+
+    .hr-auction-label {
+      font-size: 0.6rem;
+      letter-spacing: 0.12em;
+      text-transform: uppercase;
+      color: rgba(232,201,122,0.5);
+      margin-bottom: 8px;
+    }
+
+    .hr-bids {
+      display: flex;
+      gap: 8px;
+      flex-wrap: wrap;
+    }
+
+    .hr-bid {
+      font-size: 0.8rem;
+      color: rgba(250,246,238,0.65);
+      background: rgba(255,255,255,0.04);
+      border: 1px solid rgba(255,255,255,0.07);
+      border-radius: 6px;
+      padding: 3px 8px;
+      font-variant-numeric: tabular-nums;
+    }
+
+    .hr-bid.contract {
+      color: var(--gold-lt);
+      border-color: rgba(201,168,76,0.3);
+      background: rgba(201,168,76,0.08);
+    }
+
+    /* ── FEATURES ── */
+    .features {
+      padding: 100px 80px;
+      background: var(--cream);
+    }
+
+    .section-label {
+      text-align: center;
+      font-size: 0.75rem;
+      font-weight: 500;
+      letter-spacing: 0.15em;
+      text-transform: uppercase;
+      color: var(--gold);
+      margin-bottom: 16px;
+    }
+
+    h2 {
+      font-family: 'Playfair Display', serif;
+      font-size: clamp(2rem, 4vw, 2.8rem);
+      font-weight: 700;
+      text-align: center;
+      color: var(--green);
+      margin-bottom: 64px;
+      line-height: 1.2;
+    }
+
+    .features-grid {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 24px;
+      max-width: 1100px;
+      margin: 0 auto;
+    }
+
+    .feature-card {
+      background: white;
+      border-radius: var(--radius);
+      padding: 36px 32px;
+      border: 1px solid rgba(26,71,49,0.08);
+      box-shadow: 0 4px 24px rgba(26,71,49,0.06);
+      transition: transform 0.25s, box-shadow 0.25s;
+    }
+    .feature-card:hover {
+      transform: translateY(-4px);
+      box-shadow: 0 12px 40px rgba(26,71,49,0.12);
+    }
+
+    .feature-icon {
+      width: 52px; height: 52px;
+      background: linear-gradient(135deg, var(--green), var(--green2));
+      border-radius: 14px;
+      display: flex; align-items: center; justify-content: center;
+      font-size: 1.5rem;
+      margin-bottom: 20px;
+    }
+
+    .feature-card h3 {
+      font-family: 'Playfair Display', serif;
+      font-size: 1.2rem;
+      color: var(--green);
+      margin-bottom: 10px;
+    }
+
+    .feature-card p {
+      font-size: 0.925rem;
+      line-height: 1.65;
+      color: var(--muted);
+      font-weight: 300;
+    }
+
+    /* ── HOW IT WORKS ── */
+    .how {
+      padding: 100px 80px;
+      background: var(--green);
+      position: relative;
+      overflow: hidden;
+    }
+    .how::before {
+      content: '♠♥♦♣';
+      position: absolute;
+      top: -40px; right: -20px;
+      font-size: 300px;
+      color: rgba(255,255,255,0.03);
+      line-height: 1;
+      pointer-events: none;
+    }
+    .how h2 { color: var(--cream); }
+    .how .section-label { color: var(--gold-lt); }
+
+    .steps {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 40px;
+      max-width: 900px;
+      margin: 0 auto;
+      position: relative;
+    }
+
+    .steps::before {
+      content: '';
+      position: absolute;
+      top: 32px; left: calc(16.67% + 20px); right: calc(16.67% + 20px);
+      height: 1px;
+      background: linear-gradient(90deg, transparent, rgba(201,168,76,0.4), transparent);
+    }
+
+    .step { text-align: center; }
+
+    .step-num {
+      width: 64px; height: 64px;
+      border-radius: 50%;
+      background: rgba(201,168,76,0.15);
+      border: 1px solid rgba(201,168,76,0.4);
+      color: var(--gold-lt);
+      font-family: 'Playfair Display', serif;
+      font-size: 1.5rem;
+      display: flex; align-items: center; justify-content: center;
+      margin: 0 auto 20px;
+    }
+
+    .step h3 {
+      font-family: 'Playfair Display', serif;
+      font-size: 1.1rem;
+      color: var(--cream);
+      margin-bottom: 10px;
+    }
+
+    .step p {
+      font-size: 0.875rem;
+      color: rgba(250,246,238,0.6);
+      line-height: 1.6;
+      font-weight: 300;
+    }
+
+    /* ── CTA ── */
+    .cta-section {
+      padding: 100px 80px;
+      text-align: center;
+      background: var(--cream);
+    }
+
+    .cta-section h2 { margin-bottom: 16px; }
+
+    .cta-section p {
+      font-size: 1.05rem;
+      color: var(--muted);
+      margin-bottom: 44px;
+      font-weight: 300;
+    }
+
+    .cta-note {
+      margin-top: 24px;
+      font-size: 0.85rem;
+      color: var(--muted);
+    }
+    .cta-note a {
+      color: var(--green2);
+      text-decoration: none;
+    }
+    .cta-note a:hover { text-decoration: underline; }
+
+    /* ── FOOTER ── */
+    footer {
+      background: var(--dark);
+      padding: 48px 80px;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      flex-wrap: wrap;
+      gap: 20px;
+      border-top: 1px solid rgba(201,168,76,0.1);
+    }
+
+    .footer-logo {
+      font-family: 'Playfair Display', serif;
+      font-size: 1.1rem;
+      color: var(--gold-lt);
+    }
+
+    .footer-links {
+      display: flex; gap: 28px; list-style: none;
+    }
+    .footer-links a {
+      font-size: 0.85rem;
+      color: rgba(250,246,238,0.5);
+      text-decoration: none;
+      transition: color 0.2s;
+    }
+    .footer-links a:hover { color: var(--gold-lt); }
+
+    .footer-copy {
+      font-size: 0.8rem;
+      color: rgba(250,246,238,0.3);
+      width: 100%;
+      text-align: center;
+      margin-top: 8px;
+    }
+
+    /* ── ANIMATIONS ── */
+    @keyframes fadeUp {
+      from { opacity: 0; transform: translateY(28px); }
+      to   { opacity: 1; transform: translateY(0); }
+    }
+
+    /* ── QR CODE ── */
+    .qr-hint {
+      display: none;
+      flex-direction: column;
+      align-items: center;
+      gap: 10px;
+    }
+    .qr-code canvas, .qr-code img {
+      border-radius: 10px;
+      padding: 10px;
+      background: white;
+      display: block;
+    }
+    .qr-hint span {
+      font-size: 0.75rem;
+      font-weight: 400;
+      letter-spacing: 0.06em;
+      text-transform: uppercase;
+      color: rgba(250,246,238,0.45);
+    }
+
+    /* ── RESPONSIVE ── */
+    @media (max-width: 900px) {
+      nav { padding: 16px 24px; }
+      .nav-links { gap: 20px; }
+      .hero { padding: 120px 32px 80px; }
+      .hero::before { display: none; }
+      .hand-record { min-width: 0; width: 100%; max-width: 340px; padding: 20px; }
+      .features { padding: 72px 32px; }
+      .features-grid { grid-template-columns: 1fr; }
+      .how { padding: 72px 32px; }
+      .how::before { display: none; }
+      .steps { grid-template-columns: 1fr; }
+      .steps::before { display: none; }
+      .cta-section { padding: 72px 32px; }
+      footer { flex-direction: column; text-align: center; padding: 40px 32px; }
+      .footer-links { flex-wrap: wrap; justify-content: center; gap: 16px; }
+    }
+  </style>
+</head>
+<body>
+
+  <!-- NAV -->
+  <nav>
+    <a href="/" class="nav-logo">
+      <img src="/logo-mark.svg" alt="Big Deal Bridge" style="height:32px;filter:brightness(0) saturate(100%) invert(85%) sepia(30%) saturate(600%) hue-rotate(5deg) brightness(105%);">
+      <div class="nav-logo-lockup">
+        <span class="nav-logo-family">Big Deal Bridge</span>
+        <span class="nav-logo-name">Handsee</span>
+      </div>
+    </a>
+    <ul class="nav-links">
+      <li><a href="#features">Features</a></li>
+      <li><a href="/privacy/">Privacy</a></li>
+      <li><a href="/support/">Support</a></li>
+    </ul>
+  </nav>
+
+  <!-- HERO -->
+  <section class="hero">
+    <div class="hero-content">
+      <div class="hero-badge">Bridge Education</div>
+      <h1>Deal It Blind.<br><span>Then See Everything.</span></h1>
+      <p class="hero-sub">
+        Handsee lets teachers deal lesson hands and beginners deal set hands —
+        without anyone seeing the cards ahead of time. After the play, reveal
+        the full hand record and everything the PBN file contains.
+        Completely free.
+      </p>
+      <div class="hero-cta">
+        <!-- TODO: Replace # with the App Store link once Handsee is published -->
+        <a class="btn-appstore" href="#" target="_blank" rel="noopener">
+          <img src="https://tools.applemediaservices.com/api/badges/download-on-the-app-store/black/en-us?size=250x83" alt="Download on the App Store" />
+        </a>
+        <div class="qr-hint" id="qr-hero"><div class="qr-code"></div><span>Scan to download</span></div>
+      </div>
+    </div>
+
+  </section>
+
+  <!-- FEATURES -->
+  <section class="features" id="features">
+    <div class="section-label">What Handsee Does</div>
+    <h2>Everything a Bridge Teacher<br>or Beginner Needs</h2>
+
+    <div class="features-grid">
+      <div class="feature-card">
+        <div class="feature-icon">🃏</div>
+        <h3>Blind Dealing</h3>
+        <p>Hold each card face-down over the selfie camera. The app directs every card to the right player — no one sees the distribution until you choose to reveal it.</p>
+      </div>
+      <div class="feature-card">
+        <div class="feature-icon">📋</div>
+        <h3>Full Hand Record</h3>
+        <p>After the hand, see every player's cards and high card point count exactly as recorded in the PBN file — the complete hand on one screen.</p>
+      </div>
+      <div class="feature-card">
+        <div class="feature-icon">🎓</div>
+        <h3>Lesson Hands for Teachers</h3>
+        <p>Prepare lesson hands as PBN files. Students deal them blind and play the hand — then reveal the record and your notes for a guided teaching moment.</p>
+      </div>
+      <div class="feature-card">
+        <div class="feature-icon">🔍</div>
+        <h3>Set Hand Review for Beginners</h3>
+        <p>Deal a set hand without seeing who holds what, play it out, then reveal the PBN summary to see what the bidding and play should have been.</p>
+      </div>
+      <div class="feature-card">
+        <div class="feature-icon">🆓</div>
+        <h3>100% Free</h3>
+        <p>No subscriptions, no in-app purchases, no sign-up required. Handsee is completely free to download and use today.</p>
+      </div>
+    </div>
+  </section>
+
+  <!-- HOW IT WORKS -->
+  <section class="how" id="how">
+    <div class="section-label">How It Works</div>
+    <h2>Deal, Play, Reveal</h2>
+
+    <div class="steps">
+      <div class="step">
+        <div class="step-num">1</div>
+        <h3>Choose a PBN Hand</h3>
+        <p>Load a lesson hand from a PBN file — your own, a teacher's, or one from a library.</p>
+      </div>
+      <div class="step">
+        <div class="step-num">2</div>
+        <h3>Deal It Blind</h3>
+        <p>Hold each card face-down over the selfie camera. The app tells you exactly which player gets each card — the distribution stays hidden until you're ready.</p>
+      </div>
+      <div class="step">
+        <div class="step-num">3</div>
+        <h3>Play, Then Reveal</h3>
+        <p>Bid and play the hand normally. Afterwards, reveal the full hand record — every card, every player's HCP, and everything else the PBN contains.</p>
+      </div>
+    </div>
+  </section>
+
+  <!-- CTA -->
+  <section class="cta-section">
+    <h2>Ready to Deal?</h2>
+    <p>Free to download. Available on the App Store for iPhone and iPad.</p>
+    <!-- TODO: Replace # with the App Store link once Handsee is published -->
+    <a class="btn-appstore" href="#" target="_blank" rel="noopener">
+      <img src="https://tools.applemediaservices.com/api/badges/download-on-the-app-store/black/en-us?size=250x83" alt="Download on the App Store" />
+    </a>
+    <div class="qr-hint" id="qr-cta"><div class="qr-code"></div><span>Scan to download</span></div>
+    <p class="cta-note">
+      Looking for duplicate bridge scoring? <a href="/">Try Big Deal Bridge →</a>
+    </p>
+  </section>
+
+  <!-- FOOTER -->
+  <footer>
+    <div class="footer-logo">
+      <img src="/logo-full.svg" alt="Big Deal Bridge LLC" style="height:28px;filter:brightness(0) saturate(100%) invert(85%) sepia(30%) saturate(600%) hue-rotate(5deg) brightness(105%);display:block;margin-bottom:4px;"> LLC
+    </div>
+    <ul class="footer-links">
+      <li><a href="/faq/">FAQ</a></li>
+      <li><a href="/privacy/">Privacy Policy</a></li>
+      <li><a href="/support/">Support</a></li>
+      <li><a href="/">Big Deal Bridge</a></li>
+    </ul>
+    <p class="footer-copy">Copyright © 2024–2026 Big Deal Bridge LLC. All rights reserved.</p>
+  </footer>
+
+  <script src="https://cdn.jsdelivr.net/npm/qrcodejs@1.0.0/qrcode.min.js"></script>
+  <script>
+    if (!/iPhone|iPad|iPod|Android/i.test(navigator.userAgent)) {
+      const APP_URL = '#'; // TODO: replace with real App Store URL
+      ['qr-hero', 'qr-cta'].forEach(id => {
+        const hint = document.getElementById(id);
+        if (!hint || APP_URL === '#') return;
+        hint.style.display = 'flex';
+        new QRCode(hint.querySelector('.qr-code'), {
+          text: APP_URL,
+          width: 120,
+          height: 120,
+          colorDark: '#0f1f17',
+          colorLight: '#ffffff',
+          correctLevel: QRCode.CorrectLevel.M
+        });
+      });
+    }
+  </script>
+</body>
+</html>
