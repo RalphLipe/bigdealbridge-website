@@ -1,0 +1,1462 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Bridge Bidding Quiz</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Source+Serif+4:opsz,wght@8..60,400;8..60,500;8..60,600&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --bg:           #f8fafc;
+    --surface:      #ffffff;
+    --surface-2:    #f1f5f9;
+    --surface-3:    #f8fafc;
+    --text:         #0f172a;
+    --text-2:       #475569;
+    --text-3:       #64748b;
+    --border:       #e2e8f0;
+    --border-strong:#cbd5e1;
+    --accent:       #1e3a8a;
+    --accent-2:     #1e40af;
+    --accent-light: #eff6ff;
+    --red:          #dc2626;
+    --red-bg:       #fef2f2;
+    --red-border:   #fca5a5;
+    --green:        #15803d;
+    --green-bg:     #f0fdf4;
+    --green-border: #86efac;
+    --font-ui:      -apple-system, BlinkMacSystemFont, "Segoe UI", system-ui, Roboto, "Helvetica Neue", Arial, sans-serif;
+    --font-display: "Source Serif 4", Georgia, "Times New Roman", serif;
+    --font-mono:    ui-monospace, "SF Mono", "JetBrains Mono", Consolas, monospace;
+    --radius:       10px;
+    --radius-lg:    14px;
+  }
+  * { box-sizing: border-box; }
+  /* [hidden] must always win over explicit `display: flex` etc. on
+     .review-banner / .review-controls / .mastery-display. */
+  [hidden] { display: none !important; }
+  html, body {
+    margin: 0; padding: 0;
+    min-height: 100vh;
+    background: var(--bg);
+    color: var(--text);
+    font-family: var(--font-ui);
+    font-size: 16px;
+    line-height: 1.5;
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
+  }
+  .app {
+    max-width: 900px;
+    margin: 0 auto;
+    padding: 28px 22px 40px;
+  }
+
+  /* Header */
+  header {
+    display: flex;
+    justify-content: space-between;
+    align-items: baseline;
+    gap: 16px;
+    border-bottom: 2px solid var(--accent);
+    padding-bottom: 16px;
+    margin-bottom: 24px;
+    flex-wrap: wrap;
+  }
+  header h1 {
+    margin: 0;
+    font-family: var(--font-display);
+    font-size: clamp(1.4rem, 3.2vw, 1.85rem);
+    font-weight: 500;
+    color: var(--text);
+    letter-spacing: -0.01em;
+    line-height: 1.2;
+  }
+  .stats {
+    font-size: 17px;
+    color: var(--text-2);
+    white-space: nowrap;
+    display: flex;
+    flex-wrap: wrap;
+    gap: 16px;
+    row-gap: 4px;
+  }
+  .stats span { margin-left: 0; }
+  .stats b { color: var(--text); font-weight: 600; }
+  .stats .best { color: var(--text-3); font-size: 0.88em; font-weight: 400; }
+  .stats .best b { color: var(--text-2); font-weight: 500; }
+
+  /* Settings panel */
+  details.settings-panel {
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: var(--radius);
+    margin-bottom: 24px;
+    padding: 14px 18px;
+    transition: padding 0.15s;
+  }
+  details.settings-panel[open] { padding-bottom: 18px; }
+  details.settings-panel summary {
+    cursor: pointer;
+    color: var(--accent);
+    font-weight: 500;
+    font-size: 16px;
+    outline: none;
+    list-style: none;
+    padding: 2px 0;
+    user-select: none;
+  }
+  details.settings-panel summary::-webkit-details-marker { display: none; }
+  details.settings-panel summary::before {
+    content: "\25B8";
+    display: inline-block;
+    margin-right: 10px;
+    transition: transform 0.15s;
+    font-size: 0.85em;
+    color: var(--text-3);
+  }
+  details.settings-panel[open] summary::before {
+    transform: rotate(90deg);
+    color: var(--accent);
+  }
+  details.settings-panel summary:focus-visible {
+    outline: 3px solid var(--accent);
+    outline-offset: 4px;
+    border-radius: 4px;
+  }
+  .settings-content {
+    margin-top: 16px;
+    display: grid;
+    gap: 14px;
+  }
+  .settings-content > label {
+    display: inline-flex;
+    align-items: center;
+    gap: 10px;
+    font-size: 15px;
+    color: var(--text);
+    cursor: pointer;
+  }
+  .settings-content input[type="checkbox"] {
+    width: 18px;
+    height: 18px;
+    accent-color: var(--accent);
+    cursor: pointer;
+    flex-shrink: 0;
+  }
+  .rules-selector h4 {
+    margin: 14px 0 8px;
+    font-size: 15px;
+    font-weight: 500;
+    color: var(--text-2);
+  }
+  #rules-checkboxes {
+    display: grid;
+    gap: 8px;
+  }
+  details.auction-group {
+    background: var(--surface-2);
+    border: 1px solid var(--border);
+    border-radius: 8px;
+    padding: 4px 12px;
+    transition: background 0.12s;
+  }
+  details.auction-group[open] { padding-bottom: 10px; }
+  details.auction-group > summary {
+    list-style: none;
+    cursor: pointer;
+    padding: 8px 0;
+    user-select: none;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+  }
+  details.auction-group > summary::-webkit-details-marker { display: none; }
+  details.auction-group > summary::before {
+    content: "\25B8";
+    color: var(--text-3);
+    font-size: 0.8em;
+    transition: transform 0.12s;
+  }
+  details.auction-group[open] > summary::before {
+    transform: rotate(90deg);
+    color: var(--accent);
+  }
+  label.auction-master {
+    display: inline-flex;
+    align-items: center;
+    gap: 10px;
+    flex: 1;
+    cursor: pointer;
+    font-weight: 600;
+    color: var(--text);
+  }
+  label.auction-master .auction-title {
+    flex: 1;
+    font-size: 15px;
+    letter-spacing: 0.01em;
+  }
+  label.auction-master .auction-count {
+    color: var(--text-3);
+    font-size: 13px;
+    font-weight: 500;
+    font-variant-numeric: tabular-nums;
+    padding-left: 6px;
+  }
+  .auction-rules {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(220px, 1fr));
+    gap: 4px 14px;
+    padding: 6px 0 4px 24px;
+    border-top: 1px solid var(--border);
+    margin-top: 4px;
+    padding-top: 10px;
+  }
+  .auction-rules label {
+    font-size: 13.5px;
+    color: var(--text);
+    padding: 3px 0;
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    cursor: pointer;
+  }
+  .auction-rules input[type="checkbox"] {
+    width: 16px;
+    height: 16px;
+    accent-color: var(--accent);
+    flex-shrink: 0;
+    cursor: pointer;
+  }
+  /* Mastery display (shown only when exactly one rule is selected for practice) */
+  .mastery-display {
+    background: linear-gradient(to right, var(--accent-light), var(--surface));
+    border: 1px solid var(--accent);
+    border-radius: var(--radius);
+    padding: 12px 18px;
+    margin-bottom: 16px;
+  }
+  .mastery-display .mastery-line {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    flex-wrap: wrap;
+    margin-bottom: 8px;
+    font-size: 15px;
+  }
+  .mastery-display .mastery-label {
+    color: var(--text-2);
+    font-size: 13px;
+    text-transform: uppercase;
+    letter-spacing: 0.06em;
+    font-weight: 600;
+  }
+  .mastery-display .mastery-rule {
+    color: var(--text);
+    font-weight: 600;
+    font-size: 16px;
+    flex: 1;
+  }
+  .mastery-display .mastery-status {
+    color: var(--text-2);
+    font-size: 14px;
+    font-variant-numeric: tabular-nums;
+  }
+  .mastery-display .mastery-status.mastered {
+    color: var(--green);
+    font-weight: 600;
+  }
+  .mastery-bar {
+    height: 8px;
+    background: var(--surface-2);
+    border-radius: 4px;
+    overflow: hidden;
+  }
+  .mastery-bar-fill {
+    height: 100%;
+    background: var(--accent);
+    width: 0%;
+    transition: width 0.3s ease;
+  }
+  .mastery-bar-fill.mastered { background: var(--green); }
+
+  /* Review-mode banner */
+  .review-banner {
+    background: #fef3c7;
+    border: 2px solid #fbbf24;
+    border-radius: var(--radius);
+    padding: 14px 18px;
+    margin-bottom: 16px;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 14px;
+    flex-wrap: wrap;
+    font-size: 15px;
+    color: #92400e;
+    font-weight: 500;
+  }
+  .review-banner button {
+    background: var(--surface);
+    color: #92400e;
+    border: 1px solid #fbbf24;
+    padding: 7px 14px;
+    border-radius: 6px;
+    font-size: 13px;
+    font-weight: 500;
+    cursor: pointer;
+    font-family: var(--font-ui);
+  }
+  .review-banner button:hover { background: #fef3c7; }
+  /* Persistent "review available" bar above the quiz card, shown when the user
+     has 10+ missed hands AND isn't already in review mode. Lives outside the
+     settings panel so users don't have to dig to find it. */
+  .review-available {
+    background: #fffbeb;
+    border: 1.5px solid #fde68a;
+    border-radius: var(--radius);
+    padding: 12px 16px;
+    margin-bottom: 16px;
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    flex-wrap: wrap;
+    font-size: 14px;
+    color: var(--text);
+  }
+  .review-available .ra-msg { flex: 1; min-width: 180px; }
+  .review-available .ra-msg b { color: var(--accent); font-weight: 600; }
+  .review-available button, .review-available label.file-btn {
+    background: var(--surface);
+    color: var(--text);
+    border: 1px solid var(--border-strong);
+    padding: 7px 12px;
+    border-radius: 6px;
+    font-size: 13px;
+    font-weight: 500;
+    cursor: pointer;
+    font-family: var(--font-ui);
+  }
+  .review-available button:hover, .review-available label.file-btn:hover {
+    background: var(--surface-2);
+  }
+  .review-available button.start-review {
+    background: var(--accent);
+    color: white;
+    border-color: var(--accent);
+    font-weight: 600;
+  }
+  .review-available button.start-review:hover {
+    background: var(--accent-2);
+  }
+
+  /* Modal popup shown once when missedHands crosses 10. */
+  .modal-overlay {
+    position: fixed;
+    inset: 0;
+    background: rgba(15, 23, 42, 0.45);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    z-index: 100;
+    padding: 20px;
+  }
+  .modal-card {
+    background: var(--surface);
+    border-radius: var(--radius-lg);
+    padding: 28px 30px;
+    max-width: 460px;
+    width: 100%;
+    box-shadow: 0 10px 40px rgba(15, 23, 42, 0.3);
+    text-align: left;
+  }
+  .modal-card h3 {
+    margin: 0 0 10px;
+    font-size: 22px;
+    font-weight: 600;
+    color: var(--text);
+    font-family: var(--font-display);
+  }
+  .modal-card p {
+    margin: 0 0 18px;
+    font-size: 15px;
+    color: var(--text-2);
+    line-height: 1.55;
+  }
+  .modal-actions {
+    display: flex;
+    gap: 10px;
+    justify-content: flex-end;
+    flex-wrap: wrap;
+  }
+  .modal-actions button {
+    padding: 9px 18px;
+    border-radius: 8px;
+    font-size: 14px;
+    font-weight: 500;
+    cursor: pointer;
+    font-family: var(--font-ui);
+    border: 1px solid var(--border-strong);
+    background: var(--surface);
+    color: var(--text);
+  }
+  .modal-actions button:hover { background: var(--surface-2); }
+  .modal-actions button.primary {
+    background: var(--accent);
+    color: white;
+    border-color: var(--accent);
+  }
+  .modal-actions button.primary:hover { background: var(--accent-2); }
+  .settings-content button {
+    background: var(--surface);
+    color: var(--text);
+    border: 1px solid var(--border-strong);
+    padding: 9px 16px;
+    border-radius: 8px;
+    font-size: 14px;
+    font-weight: 500;
+    cursor: pointer;
+    transition: all 0.12s;
+    font-family: var(--font-ui);
+  }
+  .settings-content button:hover {
+    background: var(--surface-2);
+    border-color: var(--text-3);
+  }
+  .settings-content button:focus-visible {
+    outline: 3px solid var(--accent);
+    outline-offset: 2px;
+  }
+  .settings-content button#apply-rules {
+    background: var(--accent);
+    color: white;
+    border-color: var(--accent);
+  }
+  .settings-content button#apply-rules:hover {
+    background: var(--accent-2);
+    border-color: var(--accent-2);
+  }
+
+  /* Main quiz card */
+  .quiz {
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: var(--radius-lg);
+    padding: 26px;
+  }
+
+  /* Auction */
+  .auction-display {
+    display: grid;
+    grid-template-columns: repeat(4, 1fr);
+    gap: 8px;
+    margin-bottom: 24px;
+    text-align: center;
+  }
+  .auction-display .seat {
+    color: var(--text-3);
+    font-size: 12px;
+    font-weight: 600;
+    letter-spacing: 1.5px;
+    text-transform: uppercase;
+    padding-bottom: 4px;
+  }
+  .auction-display .bid {
+    background: var(--surface-2);
+    padding: 14px 8px;
+    border-radius: 8px;
+    color: var(--text);
+    font-size: 19px;
+    font-weight: 500;
+    min-height: 52px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+  }
+  .auction-display .bid:empty { background: transparent; }
+  .auction-display .bid-pass {
+    color: var(--text-3);
+    font-weight: 400;
+    background: transparent;
+    border: 1px dashed var(--border-strong);
+  }
+  .auction-display .bid.you {
+    background: var(--accent-light);
+    border: 2px solid var(--accent);
+    color: var(--accent);
+    font-size: 22px;
+    font-weight: 600;
+    min-height: 52px;
+    padding: 12px 8px;
+  }
+  .auction-display .bid.you.bid-pass {
+    background: var(--accent-light);
+    color: var(--accent);
+    border: 2px solid var(--accent);
+    font-weight: 600;
+  }
+  .suit.red  { color: var(--red); }
+  .suit.black { color: var(--text); }
+
+  /* Hand display \u2014 the centerpiece */
+  .hand-display {
+    background: var(--surface-3);
+    color: var(--text);
+    border: 1px solid var(--border);
+    border-radius: var(--radius);
+    padding: 22px 28px;
+    margin-bottom: 24px;
+  }
+  .hand-display .suit-row {
+    display: flex;
+    align-items: baseline;
+    font-size: 26px;
+    line-height: 1.7;
+    font-weight: 400;
+  }
+  .hand-display .suit-row .symbol {
+    width: 42px;
+    font-size: 28px;
+    font-weight: 500;
+    flex-shrink: 0;
+  }
+  .hand-display .suit-row .symbol.red  { color: var(--red); }
+  .hand-display .suit-row .symbol.black { color: var(--text); }
+  .hand-display .suit-row .cards {
+    letter-spacing: 6px;
+    font-variant-numeric: tabular-nums;
+  }
+  .hand-display .hcp-line {
+    margin-top: 14px;
+    padding-top: 14px;
+    border-top: 1px solid var(--border);
+    font-size: 15px;
+    color: var(--text-2);
+    letter-spacing: 0;
+    font-weight: 500;
+  }
+
+  /* Bidding box */
+  .bidding-box {
+    display: grid;
+    grid-template-columns: repeat(5, 1fr);
+    gap: 8px;
+    margin-bottom: 12px;
+    max-width: 560px;
+  }
+  .bid-btn {
+    background: var(--surface);
+    border: 1.5px solid var(--border-strong);
+    color: var(--text);
+    padding: 14px 4px;
+    font-size: 20px;
+    font-weight: 500;
+    font-family: var(--font-ui);
+    cursor: pointer;
+    border-radius: var(--radius);
+    transition: background 0.1s, border-color 0.1s, color 0.1s, transform 0.05s;
+    min-height: 52px;
+    line-height: 1;
+  }
+  .bid-btn:hover:not(:disabled) {
+    background: var(--accent-light);
+    border-color: var(--accent);
+    color: var(--accent);
+  }
+  .bid-btn:active:not(:disabled) {
+    transform: translateY(1px);
+  }
+  .bid-btn:focus-visible {
+    outline: 3px solid var(--accent);
+    outline-offset: 2px;
+  }
+  .bid-btn:disabled {
+    opacity: 0.35;
+    cursor: not-allowed;
+  }
+  .bid-btn.special {
+    background: var(--surface-2);
+    font-size: 17px;
+    grid-column: span 1;
+  }
+  .bid-btn.bid-toggle {
+    background: var(--surface-2);
+    font-size: 14px;
+    color: var(--text-2);
+    min-height: 36px;
+    padding: 6px 4px;
+  }
+  .bid-btn.bid-toggle:hover:not(:disabled) {
+    background: var(--surface);
+    color: var(--accent);
+    border-color: var(--accent);
+  }
+  .higher-bids { display: grid; gap: 8px; }
+  .bid-btn .red   { color: var(--red); }
+  .bid-btn .black { color: var(--text); }
+  .bid-btn:hover:not(:disabled) .black { color: var(--accent); }
+
+  /* Feedback */
+  .feedback {
+    margin-top: 20px;
+    padding: 20px 22px;
+    border-radius: var(--radius);
+    display: none;
+    font-size: 16px;
+    line-height: 1.55;
+  }
+  .feedback.show { display: block; }
+  .feedback.correct {
+    background: var(--green-bg);
+    border: 2px solid var(--green-border);
+  }
+  .feedback.acceptable {
+    background: #fffbeb;
+    border: 2px solid #fbbf24;
+  }
+  .feedback.wrong {
+    background: var(--red-bg);
+    border: 2px solid var(--red-border);
+  }
+  .feedback h3 {
+    margin: 0 0 10px;
+    font-size: 20px;
+    font-weight: 600;
+    letter-spacing: -0.01em;
+  }
+  .feedback.correct    h3 { color: var(--green); }
+  .feedback.acceptable h3 { color: #b45309; }
+  .feedback.wrong      h3 { color: var(--red); }
+  .feedback p { margin: 6px 0; }
+  .feedback .your-bid {
+    font-size: 17px;
+    padding: 10px 14px;
+    background: rgba(15, 23, 42, 0.06);
+    border-left: 4px solid var(--accent);
+    border-radius: 0 6px 6px 0;
+    margin: 0 0 14px 0;
+  }
+  .feedback.correct    .your-bid { border-left-color: var(--green); }
+  .feedback.acceptable .your-bid { border-left-color: #fbbf24; }
+  .feedback.wrong      .your-bid { border-left-color: var(--red); }
+  .feedback .breakdown {
+    margin-top: 14px;
+    padding: 14px 16px;
+    background: rgba(15, 23, 42, 0.04);
+    border: 1px solid var(--border);
+    border-radius: 8px;
+    font-family: var(--font-mono);
+    font-size: 14px;
+    line-height: 1.6;
+    white-space: pre-wrap;
+    color: var(--text);
+  }
+
+  /* Next button */
+  #next-btn {
+    background: var(--accent);
+    color: white;
+    border: none;
+    padding: 14px 28px;
+    border-radius: var(--radius);
+    font-size: 17px;
+    font-weight: 500;
+    font-family: var(--font-ui);
+    cursor: pointer;
+    margin-top: 18px;
+    transition: background 0.12s;
+  }
+  #next-btn:hover { background: var(--accent-2); }
+  #next-btn:focus-visible {
+    outline: 3px solid var(--accent);
+    outline-offset: 2px;
+  }
+
+  /* Empty state */
+  .empty-state {
+    text-align: center;
+    color: var(--text-3);
+    padding: 48px 24px;
+    font-size: 16px;
+  }
+
+  /* Smaller screens \u2014 keep readable but adjust scale */
+  @media (max-width: 580px) {
+    .app { padding: 18px 14px 28px; }
+    .quiz { padding: 18px; }
+    header h1 { font-size: 1.25rem; }
+    .stats { font-size: 15px; }
+    .auction-display { gap: 6px; }
+    .auction-display .bid { font-size: 17px; padding: 12px 4px; min-height: 46px; }
+    .auction-display .bid.you { font-size: 19px; min-height: 46px; }
+    .hand-display { padding: 18px 20px; }
+    .hand-display .suit-row { font-size: 22px; }
+    .hand-display .suit-row .symbol { width: 34px; font-size: 24px; }
+    .hand-display .suit-row .cards { letter-spacing: 4px; }
+    .bid-btn { font-size: 17px; padding: 12px 2px; min-height: 46px; }
+    .bid-btn.special { font-size: 15px; }
+  }
+</style>
+</head>
+<body>
+<div class="app">
+  <header>
+    <h1>Bridge Bidding Quiz — Opener's Rebid</h1>
+    <div class="stats">
+      <span>Correct: <b id="score-correct">0</b></span>
+      <span>Total: <b id="score-total">0</b></span>
+      <span>Streak: <b id="streak-current">0</b><span class="best" id="streak-best-wrap"> (best <b id="streak-best">0</b>)</span></span>
+    </div>
+  </header>
+
+  <div id="review-banner" class="review-banner" hidden>
+    <span><b>Review mode</b> &nbsp;&mdash;&nbsp; <span id="review-count">0</span> missed hand(s) remaining</span>
+    <button id="exit-review">Exit review</button>
+  </div>
+
+  <div id="mastery-display" class="mastery-display" hidden>
+    <div class="mastery-line">
+      <span class="mastery-label">Practicing:</span>
+      <span class="mastery-rule" id="mastery-rule-name">&mdash;</span>
+      <span class="mastery-status" id="mastery-status">&mdash;</span>
+    </div>
+    <div class="mastery-bar"><div class="mastery-bar-fill" id="mastery-bar-fill"></div></div>
+  </div>
+
+  <details class="settings-panel">
+    <summary>Settings</summary>
+    <div class="settings-content">
+      <label><input type="checkbox" id="show-hcp" checked> Show HCP on hand</label>
+      <label><input type="checkbox" id="show-tp"> Show Total Points on hand</label>
+      <div class="rules-selector">
+        <h4>Rules to include in quiz:</h4>
+        <div id="rules-checkboxes"></div>
+        <div style="margin-top: 8px;">
+          <button id="select-all">All</button>
+          <button id="select-none">None</button>
+          <button id="apply-rules" style="margin-left: 12px;">Apply / New Hand</button>
+        </div>
+      </div>
+    </div>
+  </details>
+
+  <div id="review-available" class="review-available" hidden>
+    <span class="ra-msg">You have <b id="ra-count">0</b> missed hands ready to review.</span>
+    <button id="start-review" class="start-review">Review Missed</button>
+    <button id="export-missed">Export</button>
+    <label class="file-btn">Import<input type="file" id="import-missed" accept="application/json" hidden></label>
+    <button id="clear-missed">Clear</button>
+  </div>
+
+  <main class="quiz">
+    <div class="auction-display" id="auction"></div>
+    <div class="hand-display" id="hand"></div>
+    <div class="bidding-box" id="bidbox"></div>
+    <div class="feedback" id="feedback"></div>
+    <button id="next-btn" hidden>Next Hand</button>
+  </main>
+</div>
+
+<div id="review-popup" class="modal-overlay" hidden>
+  <div class="modal-card">
+    <h3>10 missed hands ready to review</h3>
+    <p>You've collected 10 hands you didn't get right the first time. A focused review session is a fast way to nail the patterns you're missing &mdash; want to start one now?</p>
+    <div class="modal-actions">
+      <button id="popup-dismiss">Maybe later</button>
+      <button id="popup-review-now" class="primary">Review now</button>
+    </div>
+  </div>
+</div>
+
+<script src="bridge-engine.js"></script>
+<script>
+/* ===================================================================
+   UI
+   =================================================================== */
+
+// enabledRulesByAuction: { '1C-1H': Set<ruleId>, '1C-1S': Set<ruleId>, ... }
+// All auction keys present; each Set contains rule ids that are checked.
+// An empty set means the auction is fully unchecked (won't generate).
+function initEnabledRulesByAuction() {
+  const out = {};
+  for (const a of AUCTION_KEYS) {
+    out[a] = new Set(rulesForAuction(a));
+  }
+  return out;
+}
+
+const PERSIST_KEY = 'bridge-quiz-state-v1';
+const MASTERY_WINDOW = 10;             // track this many recent attempts per rule
+const MASTERY_STREAK = 5;              // N correct in a row to earn "mastered"
+const MASTERY_DEMOTE_MISSES = 2;       // 2+ misses in last 5 demotes back to learning
+const REVIEW_VISIBLE_THRESHOLD = 10;   // missed-hand count required to surface the review button
+
+let state = {
+  current: null,         // { hand, features, rule, auction }
+  scoreCorrect: 0,
+  scoreTotal: 0,
+  enabledRulesByAuction: initEnabledRulesByAuction(),
+  showHCP: true,
+  showTP: false,
+  streak: 0,
+  bestStreak: 0,
+  // ruleStats[ruleId] = { recent: [true|false,...] (most recent last), mastered: bool }
+  ruleStats: {},
+  // Each entry: { hand, auction, rule_id, user_bid, timestamp }. The hand+auction
+  // pair is the dedup key (see missKey()). Persisted across reloads in localStorage
+  // and exportable/importable as JSON so the user can carry them between devices.
+  missedHands: [],
+  reviewMode: false,
+  reviewQueue: [],       // array of indexes into state.missedHands, drained as user reviews
+  reviewPromptShown: false  // set once when first crossing the threshold so the popup only fires once
+};
+
+// Stable key for deduping missed hands. Encodes the deal as a 16-character
+// hex string per suit (one nibble per card) plus the auction.
+function missKey(hand, auction) {
+  const enc = s => hand[s].slice().sort((a,b)=>b-a).map(r => r.toString(16)).join('');
+  return enc('S') + '/' + enc('H') + '/' + enc('D') + '/' + enc('C') + '|' + auction.opening + '-' + auction.response;
+}
+
+function persistState() {
+  try {
+    const data = {
+      v: 1,
+      streak: state.streak,
+      bestStreak: state.bestStreak,
+      scoreCorrect: state.scoreCorrect,
+      scoreTotal: state.scoreTotal,
+      ruleStats: state.ruleStats,
+      missedHands: state.missedHands,
+      reviewPromptShown: state.reviewPromptShown
+    };
+    localStorage.setItem(PERSIST_KEY, JSON.stringify(data));
+  } catch (e) { /* quota or disabled storage — silently skip */ }
+}
+
+function loadPersistedState() {
+  try {
+    const raw = localStorage.getItem(PERSIST_KEY);
+    if (!raw) return;
+    const d = JSON.parse(raw);
+    if (typeof d.streak === 'number') state.streak = d.streak;
+    if (typeof d.bestStreak === 'number') state.bestStreak = d.bestStreak;
+    if (typeof d.scoreCorrect === 'number') state.scoreCorrect = d.scoreCorrect;
+    if (typeof d.scoreTotal === 'number') state.scoreTotal = d.scoreTotal;
+    if (d.ruleStats && typeof d.ruleStats === 'object') state.ruleStats = d.ruleStats;
+    if (Array.isArray(d.missedHands)) state.missedHands = d.missedHands;
+    if (typeof d.reviewPromptShown === 'boolean') state.reviewPromptShown = d.reviewPromptShown;
+  } catch (e) { /* corrupt — ignore */ }
+}
+
+function getRuleStat(ruleId) {
+  if (!state.ruleStats[ruleId]) state.ruleStats[ruleId] = { recent: [], mastered: false };
+  return state.ruleStats[ruleId];
+}
+
+// Record a result for a rule and recompute mastery. "Mastered" requires the
+// last MASTERY_STREAK results to all be correct; it's demoted back to learning
+// as soon as 2+ misses appear in the most recent 5 attempts.
+function recordRuleResult(ruleId, isCorrect) {
+  const st = getRuleStat(ruleId);
+  st.recent.push(!!isCorrect);
+  if (st.recent.length > MASTERY_WINDOW) st.recent.shift();
+  const last5 = st.recent.slice(-5);
+  const last5Misses = last5.filter(r => !r).length;
+  if (st.mastered) {
+    if (last5Misses >= MASTERY_DEMOTE_MISSES) st.mastered = false;
+  } else {
+    const tail = st.recent.slice(-MASTERY_STREAK);
+    if (tail.length >= MASTERY_STREAK && tail.every(r => r)) st.mastered = true;
+  }
+}
+
+const $auction = document.getElementById('auction');
+const $hand = document.getElementById('hand');
+const $bidbox = document.getElementById('bidbox');
+const $feedback = document.getElementById('feedback');
+const $nextBtn = document.getElementById('next-btn');
+const $rulesCheck = document.getElementById('rules-checkboxes');
+const $scoreC = document.getElementById('score-correct');
+const $scoreT = document.getElementById('score-total');
+const $showHCP = document.getElementById('show-hcp');
+const $showTP = document.getElementById('show-tp');
+const $streakCur = document.getElementById('streak-current');
+const $streakBest = document.getElementById('streak-best');
+
+// Returns the unique rule id when exactly one rule is selected across all
+// auctions (a "focused practice" mode — even if that rule appears in multiple
+// auctions, all selections must resolve to the same rule id). Returns null
+// otherwise (mixed practice — no focused mastery display).
+function getFocusedRule() {
+  const ids = new Set();
+  for (const a of AUCTION_KEYS) {
+    for (const rid of state.enabledRulesByAuction[a]) ids.add(rid);
+  }
+  return ids.size === 1 ? [...ids][0] : null;
+}
+
+function renderMasteryDisplay() {
+  const display = document.getElementById('mastery-display');
+  const focused = getFocusedRule();
+  if (focused == null) {
+    display.hidden = true;
+    return;
+  }
+  display.hidden = false;
+  const rule = RULES_BY_ID[focused];
+  document.getElementById('mastery-rule-name').innerHTML = colorizeSuits(rule.name);
+  const st = state.ruleStats[focused];
+  const statusEl = document.getElementById('mastery-status');
+  const fill = document.getElementById('mastery-bar-fill');
+  if (!st || st.recent.length === 0) {
+    statusEl.textContent = '0 in a row \u2014 need 5 to master';
+    statusEl.classList.remove('mastered');
+    fill.style.width = '0%';
+    fill.classList.remove('mastered');
+    return;
+  }
+  if (st.mastered) {
+    statusEl.textContent = '\u2605 Mastered';
+    statusEl.classList.add('mastered');
+    fill.style.width = '100%';
+    fill.classList.add('mastered');
+    return;
+  }
+  // Count current correct streak from the end of recent[]
+  let streak = 0;
+  for (let i = st.recent.length - 1; i >= 0; i--) {
+    if (st.recent[i]) streak++; else break;
+  }
+  statusEl.textContent = `${streak} in a row \u2014 need 5 to master`;
+  statusEl.classList.remove('mastered');
+  fill.style.width = Math.min(100, (streak / MASTERY_STREAK) * 100) + '%';
+  fill.classList.remove('mastered');
+}
+
+function refreshStats() {
+  $scoreC.textContent = state.scoreCorrect;
+  $scoreT.textContent = state.scoreTotal;
+  $streakCur.textContent = state.streak;
+  $streakBest.textContent = state.bestStreak;
+}
+
+// Wrap bare ♠♥♦♣ characters in colored spans (defined later as colorizeSuits;
+// hoisted via function declaration, so safe to call here too).
+
+function renderAuctionSections() {
+  $rulesCheck.innerHTML = '';
+  for (const aKey of AUCTION_KEYS) {
+    const applicable = rulesForAuction(aKey);
+    const enabled = state.enabledRulesByAuction[aKey];
+
+    const det = document.createElement('details');
+    det.className = 'auction-group';
+    det.open = enabled.size > 0;
+
+    const sum = document.createElement('summary');
+    const masterLabel = document.createElement('label');
+    masterLabel.className = 'auction-master';
+    masterLabel.addEventListener('click', e => e.stopPropagation()); // don't toggle <details>
+    const master = document.createElement('input');
+    master.type = 'checkbox';
+    master.checked = enabled.size === applicable.length;
+    master.indeterminate = enabled.size > 0 && enabled.size < applicable.length;
+    master.addEventListener('change', () => {
+      if (master.checked) {
+        for (const rid of applicable) enabled.add(rid);
+      } else {
+        enabled.clear();
+      }
+      renderAuctionSections();
+    });
+    masterLabel.appendChild(master);
+    const titleSpan = document.createElement('span');
+    titleSpan.className = 'auction-title';
+    titleSpan.innerHTML = colorizeSuits(AUCTION_LABELS[aKey]);
+    masterLabel.appendChild(titleSpan);
+    const countSpan = document.createElement('span');
+    countSpan.className = 'auction-count';
+    countSpan.textContent = `${enabled.size}/${applicable.length}`;
+    masterLabel.appendChild(countSpan);
+    sum.appendChild(masterLabel);
+    det.appendChild(sum);
+
+    const rulesDiv = document.createElement('div');
+    rulesDiv.className = 'auction-rules';
+    for (const rid of applicable) {
+      const rule = RULES_BY_ID[rid];
+      const lbl = document.createElement('label');
+      const cb = document.createElement('input');
+      cb.type = 'checkbox';
+      cb.checked = enabled.has(rid);
+      cb.addEventListener('change', () => {
+        if (cb.checked) enabled.add(rid);
+        else enabled.delete(rid);
+        // Refresh master state and count
+        master.checked = enabled.size === applicable.length;
+        master.indeterminate = enabled.size > 0 && enabled.size < applicable.length;
+        countSpan.textContent = `${enabled.size}/${applicable.length}`;
+        renderMasteryDisplay();
+      });
+      lbl.appendChild(cb);
+      const nameSpan = document.createElement('span');
+      nameSpan.innerHTML = ' ' + colorizeSuits(rule.name);
+      lbl.appendChild(nameSpan);
+      rulesDiv.appendChild(lbl);
+    }
+    det.appendChild(rulesDiv);
+    $rulesCheck.appendChild(det);
+  }
+  renderMasteryDisplay();
+}
+
+function suitClass(s) { return (s === 'H' || s === 'D') ? 'red' : 'black'; }
+
+function renderAuction(auction, userBid) {
+  // Display: West (you = opener), North (LHO), East (partner = responder), South (RHO)
+  // For 1m-1M: opener (West) starts, North passes, partner (East) responds, South passes, then West rebids.
+  // Standard sequence: W: 1m, N: pass, E: 1M, S: pass, W: ?
+  const symbolize = b => {
+    if (!b) return '';
+    if (b === 'P') return 'Pass';
+    if (b.length >= 2) {
+      const suit = b[1];
+      if (suit === 'N') return b[0] + 'NT';
+      const cls = (suit === 'H' || suit === 'D') ? 'red' : 'black';
+      return b[0] + '<span class="suit ' + cls + '">' + SUIT_SYMBOLS[suit] + '</span>';
+    }
+    return b;
+  };
+  const youBid = userBid ? symbolize(userBid) : '?';
+  $auction.innerHTML = `
+    <div class="seat">YOU (W)</div>
+    <div class="seat">N</div>
+    <div class="seat">PARTNER (E)</div>
+    <div class="seat">S</div>
+    <div class="bid">${symbolize(auction.opening)}</div>
+    <div class="bid">Pass</div>
+    <div class="bid">${symbolize(auction.response)}</div>
+    <div class="bid">Pass</div>
+    <div class="bid you">${youBid}</div>
+    <div class="bid"></div>
+    <div class="bid"></div>
+    <div class="bid"></div>
+  `;
+}
+
+function renderHand(features) {
+  const h = features.hand;
+  const fmtSuit = s => {
+    if (h[s].length === 0) return '—';
+    return h[s].map(r => RANK_NAMES[r]).join('');
+  };
+  let html = '';
+  for (const s of ['S','H','D','C']) {
+    html += `<div class="suit-row">
+      <span class="symbol ${suitClass(s)}">${SUIT_SYMBOLS[s]}</span>
+      <span class="cards">${fmtSuit(s)}</span>
+    </div>`;
+  }
+  const extras = [];
+  if (state.showHCP) extras.push(`HCP: ${features.hcp}`);
+  if (state.showTP) extras.push(`Total Points: ${features.tp}`);
+  if (extras.length) html += `<div class="hcp-line">${extras.join(' &nbsp;·&nbsp; ')}</div>`;
+  $hand.innerHTML = html;
+}
+
+// Numeric ordering for bids so we can gray out anything that's too low.
+// Strain order: C < D < H < S < NT. Pass is always legal so it stays at 0.
+function bidValue(bid) {
+  if (!bid || bid === 'P') return 0;
+  const level = parseInt(bid[0], 10);
+  const suitOrder = {C: 1, D: 2, H: 3, S: 4, N: 5};
+  return (level - 1) * 5 + (suitOrder[bid[1]] || 0);
+}
+
+function renderBiddingBox(enabled, auction) {
+  $bidbox.innerHTML = '';
+  $bidbox.style.display = enabled ? '' : 'none';
+  if (!enabled) return;
+
+  const lastBidVal = auction ? bidValue(auction.response) : 0;
+
+  // Pass button
+  const passBtn = document.createElement('button');
+  passBtn.className = 'bid-btn special';
+  passBtn.textContent = 'Pass';
+  passBtn.addEventListener('click', () => submitBid('P'));
+  $bidbox.appendChild(passBtn);
+  // Fillers to align grid
+  for (let i = 0; i < 4; i++) $bidbox.appendChild(document.createElement('span'));
+
+  // Helper to create a bid button (level + strain) and append to a container
+  const addBidButton = (level, strain, container) => {
+    const b = document.createElement('button');
+    b.className = 'bid-btn';
+    const lbl = strain === 'N' ? 'NT' : `<span class="${suitClass(strain)}">${SUIT_SYMBOLS[strain]}</span>`;
+    b.innerHTML = level + lbl;
+    const bidCode = level + strain;
+    if (bidValue(bidCode) <= lastBidVal) b.disabled = true;
+    b.addEventListener('click', () => submitBid(bidCode));
+    container.appendChild(b);
+  };
+
+  // Levels 1-4 always visible
+  for (let level = 1; level <= 4; level++) {
+    for (const strain of ['C', 'D', 'H', 'S', 'N']) {
+      addBidButton(level, strain, $bidbox);
+    }
+  }
+
+  // Toggle for higher (5-7) bids
+  const toggle = document.createElement('button');
+  toggle.className = 'bid-btn bid-toggle';
+  toggle.textContent = 'Higher bids \u25BC';
+  toggle.style.gridColumn = '1 / -1';
+  $bidbox.appendChild(toggle);
+
+  // Higher levels in a nested grid (hidden by default)
+  const higher = document.createElement('div');
+  higher.className = 'higher-bids';
+  higher.style.gridColumn = '1 / -1';
+  higher.style.display = 'none';
+  higher.style.gridTemplateColumns = 'repeat(5, 1fr)';
+  higher.style.gap = '8px';
+  for (let level = 5; level <= 7; level++) {
+    for (const strain of ['C', 'D', 'H', 'S', 'N']) {
+      addBidButton(level, strain, higher);
+    }
+  }
+  $bidbox.appendChild(higher);
+
+  toggle.addEventListener('click', () => {
+    const open = higher.style.display !== 'none';
+    higher.style.display = open ? 'none' : 'grid';
+    toggle.textContent = open ? 'Higher bids \u25BC' : 'Higher bids \u25B2';
+  });
+}
+
+function formatBid(b) {
+  if (b === 'P') return 'Pass';
+  if (b[1] === 'N') return b[0] + 'NT';
+  const cls = (b[1] === 'H' || b[1] === 'D') ? 'red' : 'black';
+  return b[0] + '<span class="suit ' + cls + '">' + SUIT_SYMBOLS[b[1]] + '</span>';
+}
+
+// Wrap bare ♠♥♦♣ characters in colored spans so suit symbols in rationale
+// text, rule names, and the breakdown all render with proper coloring.
+function colorizeSuits(text) {
+  if (!text) return '';
+  let html = String(text).replace(/[&<>]/g, c => ({'&':'&amp;', '<':'&lt;', '>':'&gt;'}[c]));
+  html = html.replace(/[\u2660\u2663]/g, m => `<span class="suit black">${m}</span>`);
+  html = html.replace(/[\u2665\u2666]/g, m => `<span class="suit red">${m}</span>`);
+  return html;
+}
+
+function evaluateBid(userBid, rule, features) {
+  const primary = rule.bid(features);
+  if (userBid === primary) return { verdict: 'correct', primary };
+  const alts = rule.alternates ? rule.alternates(features) : [];
+  const hit = alts.find(a => a.bid === userBid);
+  if (hit) return { verdict: 'acceptable', primary, alternate: hit };
+  return { verdict: 'wrong', primary };
+}
+
+function submitBid(userBid) {
+  if (!state.current) return;
+  const { features, rule, auction, hand } = state.current;
+  const result = evaluateBid(userBid, rule, features);
+  const isRight = result.verdict === 'correct' || result.verdict === 'acceptable';
+
+  state.scoreTotal++;
+  if (isRight) state.scoreCorrect++;
+
+  // Streak: increment on right, reset on wrong.
+  if (isRight) {
+    state.streak++;
+    if (state.streak > state.bestStreak) state.bestStreak = state.streak;
+  } else {
+    state.streak = 0;
+  }
+
+  // Per-rule mastery tracking.
+  recordRuleResult(rule.id, isRight);
+
+  // Missed-hand handling. Wrong answers add to the queue (dedup by hand+auction).
+  // Correct answers in review mode remove the entry from the queue.
+  const key = missKey(hand, auction);
+  if (!isRight) {
+    if (!state.missedHands.some(m => missKey(m.hand, m.auction) === key)) {
+      state.missedHands.push({
+        hand, auction, rule_id: rule.id, user_bid: userBid,
+        timestamp: new Date().toISOString()
+      });
+    }
+  } else if (state.reviewMode) {
+    state.missedHands = state.missedHands.filter(m => missKey(m.hand, m.auction) !== key);
+  }
+
+  refreshStats();
+  persistState();
+  renderReviewControls();
+  renderMasteryDisplay();
+  // Pop the threshold dialog the first time the user crosses 10 missed hands.
+  if (!isRight) maybeShowReviewPopup();
+
+  renderAuction(auction, userBid);
+  renderBiddingBox(false);
+
+  const shapeStr = features.shape.split('').join('-');
+  let breakdownLine;
+  if (!features.adjustments || features.adjustments.length === 0) {
+    breakdownLine = `${features.hcp} HCP. Shape: ${shapeStr}.`;
+  } else {
+    const equation = `${features.hcp} HCP ${features.adjustments.join(' ')} = ${features.tpRaw} points`;
+    if (features.tp !== features.tpRaw) {
+      breakdownLine = `${equation}, capped at ${features.tp} (${features.flaws.length} flaws: ${features.flaws.join(', ')}). Shape: ${shapeStr}.`;
+    } else {
+      breakdownLine = `${equation}. Shape: ${shapeStr}.`;
+    }
+  }
+
+  let header, body;
+  const yourBidLine = `<p class="your-bid"><b>You chose:</b> ${formatBid(userBid)}</p>`;
+  const rationaleText = typeof rule.rationale === 'function' ? rule.rationale(features) : rule.rationale;
+  const rationaleHtml = colorizeSuits(rationaleText);
+  const ruleNameHtml = colorizeSuits(rule.name);
+  const alternateReasonHtml = result.alternate ? colorizeSuits(result.alternate.reason) : '';
+  if (result.verdict === 'correct') {
+    header = '\u2713 Correct';
+    body = `${yourBidLine}<p>That's the textbook bid \u2014 <i>${ruleNameHtml}</i>.</p><p>${rationaleHtml}</p>`;
+  } else if (result.verdict === 'acceptable') {
+    header = '\u2713 Also acceptable';
+    body = `
+      ${yourBidLine}
+      <p>${alternateReasonHtml}</p>
+      <p><b>Textbook bid:</b> ${formatBid(result.primary)} &nbsp;\u2014&nbsp; <i>${ruleNameHtml}</i></p>
+      <p>${rationaleHtml}</p>`;
+  } else {
+    header = '\u2717 Not the textbook answer';
+    body = `${yourBidLine}<p><b>Correct bid:</b> ${formatBid(result.primary)} &nbsp;\u2014&nbsp; <i>${ruleNameHtml}</i></p><p>${rationaleHtml}</p>`;
+  }
+
+  $feedback.className = 'feedback show ' + result.verdict;
+  $feedback.innerHTML = `<h3>${header}</h3>${body}<div class="breakdown">${colorizeSuits(breakdownLine)}</div>`;
+  $nextBtn.hidden = false;
+  $nextBtn.focus();
+}
+
+function nextHand() {
+  // Review mode: draw from the missed-hands queue (oldest first) until empty.
+  if (state.reviewMode) {
+    if (state.missedHands.length === 0) {
+      exitReview('\u2713 All missed hands cleared! Switching back to fresh hands.');
+      return;
+    }
+    const m = state.missedHands[0];
+    const features = computeFeatures(m.hand, m.auction.opening, m.auction.response);
+    const rule = RULES_BY_ID[m.rule_id];
+    if (!rule) {
+      // Rule deleted/renumbered since the hand was saved; drop and try next.
+      state.missedHands.shift();
+      persistState();
+      renderReviewControls();
+      nextHand();
+      return;
+    }
+    state.current = { hand: m.hand, features, rule, auction: m.auction };
+    $feedback.className = 'feedback';
+    $nextBtn.hidden = true;
+    renderAuction(m.auction, null);
+    renderHand(features);
+    renderBiddingBox(true, m.auction);
+    return;
+  }
+
+  let totalEnabled = 0;
+  for (const a of AUCTION_KEYS) totalEnabled += state.enabledRulesByAuction[a].size;
+  if (totalEnabled === 0) {
+    $hand.innerHTML = '<div class="empty-state">Select at least one rule in Settings to start.</div>';
+    $auction.innerHTML = '';
+    renderBiddingBox(false);
+    $feedback.className = 'feedback';
+    $nextBtn.hidden = true;
+    return;
+  }
+  const result = generateForAuctionRuleMap(state.enabledRulesByAuction);
+  if (!result) {
+    $hand.innerHTML = '<div class="empty-state">Could not generate a hand for the selected rules. Try widening the selection.</div>';
+    $feedback.className = 'feedback';
+    $nextBtn.hidden = true;
+    return;
+  }
+  state.current = result;
+  $feedback.className = 'feedback';
+  $nextBtn.hidden = true;
+  renderAuction(result.auction, null);
+  renderHand(result.features);
+  renderBiddingBox(true, result.auction);
+}
+
+// Review-mode UI. The "review available" bar lives just above the quiz card
+// (NOT in the settings panel) so it surfaces naturally once the user hits the
+// threshold. The review-mode banner replaces it when actually in review mode.
+function renderReviewControls() {
+  const banner = document.getElementById('review-banner');
+  const bar = document.getElementById('review-available');
+  const count = state.missedHands.length;
+
+  banner.hidden = !state.reviewMode;
+  if (state.reviewMode) document.getElementById('review-count').textContent = count;
+
+  // Show the available-bar when at threshold AND not in review mode.
+  const showBar = count >= REVIEW_VISIBLE_THRESHOLD && !state.reviewMode;
+  bar.hidden = !showBar;
+  if (showBar) document.getElementById('ra-count').textContent = count;
+}
+
+function showReviewPopup() {
+  document.getElementById('review-popup').hidden = false;
+}
+function dismissReviewPopup() {
+  document.getElementById('review-popup').hidden = true;
+}
+
+// Fire the popup once when the user crosses the missed-hand threshold. The
+// `reviewPromptShown` flag persists so reloads don't re-fire it.
+function maybeShowReviewPopup() {
+  if (state.missedHands.length >= REVIEW_VISIBLE_THRESHOLD
+      && !state.reviewPromptShown
+      && !state.reviewMode) {
+    state.reviewPromptShown = true;
+    persistState();
+    showReviewPopup();
+  }
+}
+
+function startReview() {
+  if (state.missedHands.length === 0) return;
+  state.reviewMode = true;
+  renderReviewControls();
+  nextHand();
+}
+
+function exitReview(toastMsg) {
+  state.reviewMode = false;
+  state.reviewQueue = [];
+  renderReviewControls();
+  if (toastMsg) {
+    $feedback.className = 'feedback show correct';
+    $feedback.innerHTML = `<h3>${toastMsg}</h3>`;
+    $nextBtn.hidden = false;
+  }
+  nextHand();
+}
+
+function exportMissed() {
+  if (state.missedHands.length === 0) {
+    alert('No missed hands to export yet.');
+    return;
+  }
+  const data = {
+    version: 1,
+    type: 'bridge-quiz-missed',
+    exported: new Date().toISOString(),
+    hands: state.missedHands
+  };
+  const blob = new Blob([JSON.stringify(data, null, 2)], { type: 'application/json' });
+  const url = URL.createObjectURL(blob);
+  const a = document.createElement('a');
+  a.href = url;
+  const stamp = new Date().toISOString().slice(0, 10);
+  a.download = `bridge-missed-${stamp}.json`;
+  a.click();
+  URL.revokeObjectURL(url);
+}
+
+function importMissedFile(file) {
+  const reader = new FileReader();
+  reader.onload = e => {
+    try {
+      const data = JSON.parse(e.target.result);
+      const hands = Array.isArray(data) ? data : (Array.isArray(data.hands) ? data.hands : null);
+      if (!hands) { alert('That file doesn\u2019t look like a missed-hands export.'); return; }
+      const existing = new Set(state.missedHands.map(m => missKey(m.hand, m.auction)));
+      let added = 0;
+      for (const h of hands) {
+        if (!h || !h.hand || !h.auction || typeof h.rule_id !== 'number') continue;
+        const k = missKey(h.hand, h.auction);
+        if (existing.has(k)) continue;
+        state.missedHands.push(h);
+        existing.add(k);
+        added++;
+      }
+      persistState();
+      renderReviewControls();
+      alert(`Imported ${added} new hand(s) (skipped ${hands.length - added} duplicate/invalid).`);
+    } catch (err) {
+      alert('Failed to parse JSON: ' + err.message);
+    }
+  };
+  reader.readAsText(file);
+}
+
+function clearMissed() {
+  if (state.missedHands.length === 0) return;
+  if (!confirm(`Clear all ${state.missedHands.length} missed hand(s)? This cannot be undone unless you exported first.`)) return;
+  state.missedHands = [];
+  state.reviewMode = false;
+  persistState();
+  renderReviewControls();
+}
+
+/* ---------- Wire up ---------- */
+loadPersistedState();
+refreshStats();
+renderAuctionSections();
+renderReviewControls();
+// If the user already had 10+ missed hands from a prior session and never
+// saw the popup (e.g., crossed the threshold but never reloaded with the new
+// build), surface it on next load instead of waiting for another wrong bid.
+maybeShowReviewPopup();
+
+document.getElementById('select-all').addEventListener('click', () => {
+  for (const a of AUCTION_KEYS) {
+    state.enabledRulesByAuction[a] = new Set(rulesForAuction(a));
+  }
+  renderAuctionSections();
+});
+document.getElementById('select-none').addEventListener('click', () => {
+  for (const a of AUCTION_KEYS) state.enabledRulesByAuction[a].clear();
+  renderAuctionSections();
+});
+document.getElementById('apply-rules').addEventListener('click', nextHand);
+document.getElementById('exit-review').addEventListener('click', () => exitReview());
+document.getElementById('start-review').addEventListener('click', startReview);
+document.getElementById('export-missed').addEventListener('click', exportMissed);
+document.getElementById('import-missed').addEventListener('change', e => {
+  const f = e.target.files[0];
+  if (f) importMissedFile(f);
+  e.target.value = '';
+});
+document.getElementById('clear-missed').addEventListener('click', clearMissed);
+document.getElementById('popup-dismiss').addEventListener('click', dismissReviewPopup);
+document.getElementById('popup-review-now').addEventListener('click', () => {
+  dismissReviewPopup();
+  startReview();
+});
+// Click on the dimmed backdrop (but not on the card) dismisses the popup.
+document.getElementById('review-popup').addEventListener('click', e => {
+  if (e.target.id === 'review-popup') dismissReviewPopup();
+});
+$showHCP.addEventListener('change', () => { state.showHCP = $showHCP.checked; if (state.current) renderHand(state.current.features); });
+$showTP.addEventListener('change', () => { state.showTP = $showTP.checked; if (state.current) renderHand(state.current.features); });
+$nextBtn.addEventListener('click', nextHand);
+
+nextHand();
+</script>
+</body>
+</html>
